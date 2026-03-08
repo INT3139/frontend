@@ -1,0 +1,15 @@
+{
+  "file_scan_exclusions": ["**/routeTree.gen.ts"],
+
+  // https://zed.dev/docs/languages/tailwindcss
+  "lsp": {
+    "tailwindcss-language-server": {
+      "settings": {
+        "classFunctions": ["cva", "cx", "cn"],
+        "experimental": {
+          "classRegex": ["[cls|className]\\s\\:\\=\\s\"([^\"]*)"]
+        }
+      }
+    }
+  }
+}
