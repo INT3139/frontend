@@ -27,8 +27,8 @@
     "baseUrl": ".",
     "paths": {
       "@/public/*": ["./public/*"],
-      "@/*": ["./src/*"]
-    }
+      "@/*": ["./src/*"],
+    },
   },
-  "include": ["src"]
+  "include": ["src"],
 }

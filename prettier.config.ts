@@ -9,6 +9,20 @@ const config: Config = {
   ],
   tailwindFunctions: ['cn'],
   importOrderCaseSensitive: true,
+  overrides: [
+    {
+      files: [
+        'tsconfig.json',
+        'tsconfig.node.json',
+        'tsconfig.app.json',
+        '.vscode/settings.json',
+        '.zed/settings.json',
+      ],
+      options: {
+        parser: 'jsonc',
+      },
+    },
+  ],
 };
 
 export default config;

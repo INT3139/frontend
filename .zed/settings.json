@@ -7,9 +7,9 @@
       "settings": {
         "classFunctions": ["cva", "cx", "cn"],
         "experimental": {
-          "classRegex": ["[cls|className]\\s\\:\\=\\s\"([^\"]*)"]
-        }
-      }
-    }
-  }
+          "classRegex": ["[cls|className]\\s\\:\\=\\s\"([^\"]*)"],
+        },
+      },
+    },
+  },
 }
