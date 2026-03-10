@@ -1,5 +1,6 @@
 import { AppSidebar } from '@/components/main/AppSidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { MainHeader } from '@/components/main/MainHeader';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
 
@@ -18,11 +19,12 @@ function RouteComponent() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main>
+      <SidebarInset>
         <TooltipProvider>
+          <MainHeader />
           <Outlet />
         </TooltipProvider>
-      </main>
+      </SidebarInset>
     </SidebarProvider>
   );
 }
