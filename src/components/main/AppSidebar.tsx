@@ -82,7 +82,7 @@ export function AppSidebar() {
     if (nav.items && nav.items.length > 0) {
       return (
         <Collapsible className="group" key={nav.label}>
-          <CollapsibleTrigger className="w-full">
+          <CollapsibleTrigger className="w-full" asChild>
             <Button
               variant="ghost"
               className="w-full justify-between has-[>svg]:px-4"
