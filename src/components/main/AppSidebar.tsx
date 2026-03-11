@@ -6,12 +6,24 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarTrigger,
+  useSidebar,
 } from '@/components/ui/sidebar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { isRouteActive } from '@/lib/sidebar';
 import { cn } from '@/lib/utils';
 import { Route as academicProjectsRoute } from '@/routes/(protected)/_authenticated/academic-cv/projects';
@@ -115,7 +127,7 @@ export function AppSidebar() {
         </div>
         <div
           className={cn(
-            'py-3 px-5 pl-6',
+            'px-5 py-3 pl-6',
             'bg-blue-950 text-amber-50',
             'flex flex-row justify-between',
             'group-data-[collapsible=icon]:pl-5',
@@ -140,7 +152,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent className="w-full p-2">
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex w-full flex-col gap-2">
           {SIDEBAR_NAV_ITEMS.map((nav) => (
             <SidebarNavItem key={nav.label} nav={nav} />
           ))}
@@ -153,49 +165,107 @@ export function AppSidebar() {
 
 function SidebarNavItem({ nav }: { nav: SidebarNavItem }) {
   const { pathname } = useLocation();
+  const { open: sidebarOpen } = useSidebar();
+
   const isActive =
     'to' in nav
       ? isRouteActive(pathname, nav.to)
       : nav.items.some((item) => isRouteActive(pathname, item.to));
-  console.log(pathname, nav.to, isActive);
 
-  if (nav.items && nav.items.length > 0) {
+  const hasItems = nav.items && nav.items?.length;
+
+  if (!sidebarOpen) {
+    if (hasItems) {
+      return (
+        <DropdownMenu>
+          <Tooltip delayDuration={400}>
+            <TooltipTrigger asChild>
+              <DropdownMenuTrigger asChild>
+                <NavItemButton active={isActive} className="w-full py-3" center>
+                  <NavItemContent icon={nav.icon} label={nav.label} />
+                </NavItemButton>
+              </DropdownMenuTrigger>
+            </TooltipTrigger>
+            <TooltipContent side={'bottom'}>
+              <p>{nav.label}</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <DropdownMenuContent
+            className={cn(
+              'overflow-y-auto',
+              'max-h-(--radix-menubar-content-available-height)',
+            )}
+            side="right"
+            align="start"
+            sideOffset={16}
+          >
+            {nav.items?.map((item) => {
+              const isSubActive = isRouteActive(pathname, item.to);
+              return (
+                <DropdownMenuItem key={item.label}>
+                  <Button
+                    variant={isSubActive ? 'secondary' : 'ghost'}
+                    className="h-auto w-full justify-start text-left"
+                    asChild
+                  >
+                    <Link to={item.to}>
+                      <span className="text-wrap">{item.label}</span>
+                    </Link>
+                  </Button>
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    } else {
+      return (
+        <Tooltip delayDuration={400}>
+          <TooltipTrigger asChild>
+            <NavItemButton active={isActive} asChild center>
+              <Link key={nav.label} to={nav.to}>
+                <NavItemContent icon={nav.icon} label={nav.label} />
+              </Link>
+            </NavItemButton>
+          </TooltipTrigger>
+          <TooltipContent side={'bottom'}>
+            <p>{nav.label}</p>
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+  }
+
+  if (hasItems) {
     return (
       <Collapsible className="group" key={nav.label}>
         <CollapsibleTrigger className="w-full" asChild>
-          <Button
-            variant={isActive ? 'secondary' : 'ghost'}
-            className="w-full h-auto has-[>svg]:px-0 py-3 active:scale-95"
-          >
-            <div
-              className={cn(
-                'w-full flex flex-row justify-between gap-2 items-center',
-                'group-data-[collapsible=icon]:justify-center',
-              )}
-            >
-              <SidebarNavItemContent icon={nav.icon} label={nav.label} />
+          <NavItemButton active={isActive}>
+            <NavItemContent icon={nav.icon} label={nav.label} />
+            <span className="ml-auto shrink-0">
               <ChevronRight
                 className={cn(
                   'transition-transform',
-                  'group-data-[collapsible=icon]:hidden',
                   'group-data-[state=open]:rotate-90',
                 )}
               />
-            </div>
-          </Button>
+            </span>
+          </NavItemButton>
         </CollapsibleTrigger>
-        <CollapsibleContent className="mt-2 pl-9 pr-6">
+        <CollapsibleContent className="mt-2 flex flex-col gap-1 pr-6 pl-9">
           {nav.items.map((item) => {
             const isSubActive = isRouteActive(pathname, item.to);
             return (
-              <Link key={item.label} to={item.to}>
-                <Button
-                  variant={isSubActive ? 'secondary' : 'ghost'}
-                  className="w-full justify-start h-auto text-left"
-                >
+              <Button
+                variant={isSubActive ? 'secondary' : 'ghost'}
+                className="h-auto w-full justify-start text-left active:scale-96"
+                asChild
+              >
+                <Link key={item.label} to={item.to}>
                   <span className="text-wrap">{item.label}</span>
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             );
           })}
         </CollapsibleContent>
@@ -203,23 +273,42 @@ function SidebarNavItem({ nav }: { nav: SidebarNavItem }) {
     );
   } else {
     return (
-      <Button
-        variant={isActive ? 'secondary' : 'ghost'}
-        className={cn(
-          'w-full h-auto has-[>svg]:px-0 py-3 active:scale-95 justify-start',
-          'group-data-[collapsible=icon]:justify-center',
-        )}
-        asChild
-      >
-        <Link key={nav.label} to={nav.to} className="justify-between">
-          <SidebarNavItemContent icon={nav.icon} label={nav.label} />
+      <NavItemButton active={isActive} asChild>
+        <Link key={nav.label} to={nav.to}>
+          <NavItemContent icon={nav.icon} label={nav.label} />
         </Link>
-      </Button>
+      </NavItemButton>
     );
   }
 }
 
-function SidebarNavItemContent({
+function NavItemButton({
+  active,
+  center,
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof Button> & {
+  active?: boolean;
+  center?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <Button
+      variant={active ? 'secondary' : 'ghost'}
+      className={cn(
+        'h-auto w-full py-3 active:scale-96',
+        center ? 'justify-center' : 'justify-start',
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </Button>
+  );
+}
+
+function NavItemContent({
   icon,
   label,
 }: {
