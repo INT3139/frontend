@@ -3,6 +3,7 @@ const MENU_ITEMS = [
   'Thông tin tuyển dụng',
   'Quá trình công tác, hoạt động Đảng - đoàn thể',
   'Quá trình Đào tạo, bồi dưỡng',
+  'Quá trình ký hợp đồng',
   'Thông tin lương',
   'Danh hiệu thi đua, khen thưởng, kỷ luật',
   'Tình trạng sức khỏe',
@@ -10,7 +11,14 @@ const MENU_ITEMS = [
   'Thông tin khác',
 ];
 
-export function PersonnelSidebar() {
+interface PersonnelSidebarProps {
+  activeTab: string;
+  onTabChange: (tabName: string) => void;
+}
+export function PersonnelSidebar({
+  activeTab,
+  onTabChange,
+}: PersonnelSidebarProps) {
   return (
     <div className="flex flex-col w-80 border-r border-gray-200 h-screen bg-white">
       <div className="p-6 border-b border-gray-200">
@@ -34,7 +42,13 @@ export function PersonnelSidebar() {
             <a
               key={index}
               href="#"
-              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100"
+              onClick={(e) => {
+                e.preventDefault();
+                onTabChange(item);
+              }}
+              className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 ${
+                activeTab === item ? 'bg-gray-100' : ''
+              }`}
             >
               <span className="text-sm font-medium">{item}</span>
             </a>
