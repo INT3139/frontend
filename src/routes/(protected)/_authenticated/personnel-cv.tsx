@@ -6,11 +6,12 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
 });
+
 function RouteComponent() {
   return (
     <div className="flex h-screen w-full">
       <PersonnelSidebar />
-      <div className="grow bg-gray-50 p-6 overflow-y-auto">
+      <div className="grow bg-gray-50 overflow-y-auto">
         <Outlet />
       </div>
     </div>

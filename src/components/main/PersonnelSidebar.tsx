@@ -1,13 +1,21 @@
+import { Link } from '@tanstack/react-router';
+
 const MENU_ITEMS = [
-  'Thông tin nhân sự',
-  'Thông tin tuyển dụng',
-  'Quá trình công tác, hoạt động Đảng - đoàn thể',
-  'Quá trình Đào tạo, bồi dưỡng',
-  'Thông tin lương',
-  'Danh hiệu thi đua, khen thưởng, kỷ luật',
-  'Tình trạng sức khỏe',
-  'Quan hệ gia đình',
-  'Thông tin khác',
+  { label: 'Thông tin nhân sự', to: '/personnel-cv' },
+  { label: 'Thông tin tuyển dụng', to: '/personnel-cv/recruitment' },
+  {
+    label: 'Quá trình công tác, hoạt động Đảng - đoàn thể',
+    to: '/personnel-cv/work-history',
+  },
+  { label: 'Quá trình Đào tạo, bồi dưỡng', to: '/personnel-cv/training' },
+  { label: 'Thông tin lương', to: '/personnel-cv/salary' },
+  {
+    label: 'Danh hiệu thi đua, khen thưởng, kỷ luật',
+    to: '/personnel-cv/awards',
+  },
+  { label: 'Tình trạng sức khỏe', to: '/personnel-cv/health' },
+  { label: 'Quan hệ gia đình', to: '/personnel-cv/family' },
+  { label: 'Thông tin khác', to: '/personnel-cv/other' },
 ];
 
 export function PersonnelSidebar() {
@@ -31,13 +39,14 @@ export function PersonnelSidebar() {
       <div className="flex-1 p-4 overflow-y-auto">
         <nav className="flex flex-col space-y-1">
           {MENU_ITEMS.map((item, index) => (
-            <a
+            <Link
               key={index}
-              href="#"
-              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100"
+              to={item.to}
+              activeOptions={{ exact: true }}
+              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100 [&.active]:bg-gray-100 [&.active]:font-semibold"
             >
-              <span className="text-sm font-medium">{item}</span>
-            </a>
+              <span className="text-sm font-medium">{item.label}</span>
+            </Link>
           ))}
         </nav>
       </div>
