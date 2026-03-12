@@ -17,7 +17,14 @@ export const Route = createFileRoute('/(protected)/_authenticated')({
 
 function RouteComponent() {
   return (
-    <SidebarProvider>
+    <SidebarProvider
+      style={
+        {
+          '--sidebar-width': '18rem',
+          '--sidebar-width-icon': '4rem',
+        } as React.CSSProperties
+      }
+    >
       <AppSidebar />
       <SidebarInset>
         <TooltipProvider>
