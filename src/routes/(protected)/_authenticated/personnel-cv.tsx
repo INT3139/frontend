@@ -8,9 +8,9 @@ export const Route = createFileRoute(
 });
 function RouteComponent() {
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex w-full">
       <PersonnelSidebar />
-      <div className="grow bg-gray-50 p-6 overflow-y-auto">
+      <div className="bg-gray-50 p-6">
         <Outlet />
       </div>
     </div>

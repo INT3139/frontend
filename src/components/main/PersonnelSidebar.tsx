@@ -12,7 +12,7 @@ const MENU_ITEMS = [
 
 export function PersonnelSidebar() {
   return (
-    <div className="flex h-screen w-80 shrink-0 flex-col border-r border-gray-200 bg-white">
+    <div className="flex h-auto w-80 shrink-0 flex-col border-r border-gray-200 bg-white">
       <div className="border-b border-gray-200 p-6">
         <div className="flex justify-center">
           <img
