@@ -1,16 +1,24 @@
+import { cn } from '@/lib/utils';
+import { Link, useLocation } from '@tanstack/react-router';
+
 const MENU_ITEMS = [
-  'Thông tin nhân sự',
-  'Thông tin tuyển dụng',
-  'Quá trình công tác, hoạt động Đảng - đoàn thể',
-  'Quá trình Đào tạo, bồi dưỡng',
-  'Thông tin lương',
-  'Danh hiệu thi đua, khen thưởng, kỷ luật',
-  'Tình trạng sức khỏe',
-  'Quan hệ gia đình',
-  'Thông tin khác',
+  { label: 'Thông tin nhân sự', path: '/personnel-cv' },
+  { label: 'Thông tin tuyển dụng', path: '/personnel-cv' },
+  {
+    label: 'Quá trình công tác, hoạt động Đảng - đoàn thể',
+    path: '/personnel-cv',
+  },
+  { label: 'Quá trình Đào tạo, bồi dưỡng', path: '/personnel-cv' },
+  { label: 'Thông tin lương', path: '/personnel-cv' },
+  { label: 'Danh hiệu thi đua, khen thưởng, kỷ luật', path: '/personnel-cv' },
+  { label: 'Tình trạng sức khỏe', path: '/personnel-cv' },
+  { label: 'Quan hệ gia đình', path: '/personnel-cv/family' },
+  { label: 'Thông tin khác', path: '/personnel-cv/others' },
 ];
 
 export function PersonnelSidebar() {
+  const { pathname } = useLocation();
+
   return (
     <div className="flex flex-col w-80 border-r border-gray-200 h-screen bg-white">
       <div className="p-6 border-b border-gray-200">
@@ -30,15 +38,26 @@ export function PersonnelSidebar() {
 
       <div className="flex-1 p-4 overflow-y-auto">
         <nav className="flex flex-col space-y-1">
-          {MENU_ITEMS.map((item, index) => (
-            <a
-              key={index}
-              href="#"
-              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-100"
-            >
-              <span className="text-sm font-medium">{item}</span>
-            </a>
-          ))}
+          {MENU_ITEMS.map((item, index) => {
+            const isActive =
+              pathname === item.path ||
+              (pathname.startsWith(item.path) && item.path !== '/personnel-cv');
+
+            return (
+              <Link
+                key={index}
+                to={item.path}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2 rounded-md transition-colors',
+                  isActive
+                    ? 'bg-blue-50 text-blue-700 font-semibold'
+                    : 'text-gray-700 hover:bg-gray-100',
+                )}
+              >
+                <span className="text-sm font-medium">{item.label}</span>
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </div>

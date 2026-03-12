@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as protectedAuthenticatedRouteImport } from './routes/(protected)/_authenticated'
 import { Route as protectedAuthenticatedIndexRouteImport } from './routes/(protected)/_authenticated/index'
 import { Route as protectedAuthenticatedPersonnelCvRouteImport } from './routes/(protected)/_authenticated/personnel-cv'
+import { Route as protectedAuthenticatedPersonnelCvFamilyRouteImport } from './routes/(protected)/_authenticated/personnel-cv/family'
 import { Route as protectedAuthenticatedAcademicCvScholarlyWorksRouteImport } from './routes/(protected)/_authenticated/academic-cv/scholarly-works'
 import { Route as protectedAuthenticatedAcademicCvProjectsRouteImport } from './routes/(protected)/_authenticated/academic-cv/projects'
 
@@ -37,6 +38,12 @@ const protectedAuthenticatedPersonnelCvRoute =
     path: '/personnel-cv',
     getParentRoute: () => protectedAuthenticatedRoute,
   } as any)
+const protectedAuthenticatedPersonnelCvFamilyRoute =
+  protectedAuthenticatedPersonnelCvFamilyRouteImport.update({
+    id: '/family',
+    path: '/family',
+    getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
+  } as any)
 const protectedAuthenticatedAcademicCvScholarlyWorksRoute =
   protectedAuthenticatedAcademicCvScholarlyWorksRouteImport.update({
     id: '/academic-cv/scholarly-works',
@@ -52,26 +59,29 @@ const protectedAuthenticatedAcademicCvProjectsRoute =
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
-  '/personnel-cv': typeof protectedAuthenticatedPersonnelCvRoute
+  '/personnel-cv': typeof protectedAuthenticatedPersonnelCvRouteWithChildren
   '/': typeof protectedAuthenticatedIndexRoute
   '/academic-cv/projects': typeof protectedAuthenticatedAcademicCvProjectsRoute
   '/academic-cv/scholarly-works': typeof protectedAuthenticatedAcademicCvScholarlyWorksRoute
+  '/personnel-cv/family': typeof protectedAuthenticatedPersonnelCvFamilyRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
-  '/personnel-cv': typeof protectedAuthenticatedPersonnelCvRoute
+  '/personnel-cv': typeof protectedAuthenticatedPersonnelCvRouteWithChildren
   '/': typeof protectedAuthenticatedIndexRoute
   '/academic-cv/projects': typeof protectedAuthenticatedAcademicCvProjectsRoute
   '/academic-cv/scholarly-works': typeof protectedAuthenticatedAcademicCvScholarlyWorksRoute
+  '/personnel-cv/family': typeof protectedAuthenticatedPersonnelCvFamilyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/login': typeof LoginRoute
   '/(protected)/_authenticated': typeof protectedAuthenticatedRouteWithChildren
-  '/(protected)/_authenticated/personnel-cv': typeof protectedAuthenticatedPersonnelCvRoute
+  '/(protected)/_authenticated/personnel-cv': typeof protectedAuthenticatedPersonnelCvRouteWithChildren
   '/(protected)/_authenticated/': typeof protectedAuthenticatedIndexRoute
   '/(protected)/_authenticated/academic-cv/projects': typeof protectedAuthenticatedAcademicCvProjectsRoute
   '/(protected)/_authenticated/academic-cv/scholarly-works': typeof protectedAuthenticatedAcademicCvScholarlyWorksRoute
+  '/(protected)/_authenticated/personnel-cv/family': typeof protectedAuthenticatedPersonnelCvFamilyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +91,7 @@ export interface FileRouteTypes {
     | '/'
     | '/academic-cv/projects'
     | '/academic-cv/scholarly-works'
+    | '/personnel-cv/family'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -88,6 +99,7 @@ export interface FileRouteTypes {
     | '/'
     | '/academic-cv/projects'
     | '/academic-cv/scholarly-works'
+    | '/personnel-cv/family'
   id:
     | '__root__'
     | '/login'
@@ -96,6 +108,7 @@ export interface FileRouteTypes {
     | '/(protected)/_authenticated/'
     | '/(protected)/_authenticated/academic-cv/projects'
     | '/(protected)/_authenticated/academic-cv/scholarly-works'
+    | '/(protected)/_authenticated/personnel-cv/family'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -133,6 +146,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedAuthenticatedPersonnelCvRouteImport
       parentRoute: typeof protectedAuthenticatedRoute
     }
+    '/(protected)/_authenticated/personnel-cv/family': {
+      id: '/(protected)/_authenticated/personnel-cv/family'
+      path: '/family'
+      fullPath: '/personnel-cv/family'
+      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvFamilyRouteImport
+      parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
+    }
     '/(protected)/_authenticated/academic-cv/scholarly-works': {
       id: '/(protected)/_authenticated/academic-cv/scholarly-works'
       path: '/academic-cv/scholarly-works'
@@ -150,8 +170,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface protectedAuthenticatedPersonnelCvRouteChildren {
+  protectedAuthenticatedPersonnelCvFamilyRoute: typeof protectedAuthenticatedPersonnelCvFamilyRoute
+}
+
+const protectedAuthenticatedPersonnelCvRouteChildren: protectedAuthenticatedPersonnelCvRouteChildren =
+  {
+    protectedAuthenticatedPersonnelCvFamilyRoute:
+      protectedAuthenticatedPersonnelCvFamilyRoute,
+  }
+
+const protectedAuthenticatedPersonnelCvRouteWithChildren =
+  protectedAuthenticatedPersonnelCvRoute._addFileChildren(
+    protectedAuthenticatedPersonnelCvRouteChildren,
+  )
+
 interface protectedAuthenticatedRouteChildren {
-  protectedAuthenticatedPersonnelCvRoute: typeof protectedAuthenticatedPersonnelCvRoute
+  protectedAuthenticatedPersonnelCvRoute: typeof protectedAuthenticatedPersonnelCvRouteWithChildren
   protectedAuthenticatedIndexRoute: typeof protectedAuthenticatedIndexRoute
   protectedAuthenticatedAcademicCvProjectsRoute: typeof protectedAuthenticatedAcademicCvProjectsRoute
   protectedAuthenticatedAcademicCvScholarlyWorksRoute: typeof protectedAuthenticatedAcademicCvScholarlyWorksRoute
@@ -160,7 +195,7 @@ interface protectedAuthenticatedRouteChildren {
 const protectedAuthenticatedRouteChildren: protectedAuthenticatedRouteChildren =
   {
     protectedAuthenticatedPersonnelCvRoute:
-      protectedAuthenticatedPersonnelCvRoute,
+      protectedAuthenticatedPersonnelCvRouteWithChildren,
     protectedAuthenticatedIndexRoute: protectedAuthenticatedIndexRoute,
     protectedAuthenticatedAcademicCvProjectsRoute:
       protectedAuthenticatedAcademicCvProjectsRoute,
