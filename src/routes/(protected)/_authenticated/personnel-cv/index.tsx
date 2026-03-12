@@ -1,23 +1,12 @@
+import { InfoRow } from '@/components/main/personel-cv/InfoRow';
+import { PageHeader } from '@/components/main/personel-cv/PageHeader';
 import { createFileRoute } from '@tanstack/react-router';
-import { Download, RefreshCw } from 'lucide-react';
 
 export const Route = createFileRoute(
   '/(protected)/_authenticated/personnel-cv/',
 )({
   component: RouteComponent,
 });
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex text-sm">
-      <div className="w-56 md:w-64 font-semibold text-gray-700 shrink-0">
-        {label}
-      </div>
-      <div className="w-6 text-gray-600 shrink-0">:</div>
-      <div className="text-gray-800 flex-1">{value}</div>
-    </div>
-  );
-}
 
 function TableRow({
   label,
@@ -35,19 +24,19 @@ function TableRow({
   country: string;
 }) {
   return (
-    <tr className="bg-white hover:bg-gray-50 transition-colors">
-      <td className="px-4 py-3 border border-gray-200 font-semibold text-gray-700">
+    <tr className="bg-white transition-colors hover:bg-gray-50">
+      <td className="border border-gray-200 px-4 py-3 font-semibold text-gray-700">
         {label}
       </td>
-      <td className="px-4 py-3 border border-gray-200 text-gray-800">
+      <td className="border border-gray-200 px-4 py-3 text-gray-800">
         {street}
       </td>
-      <td className="px-4 py-3 border border-gray-200 text-gray-800">{ward}</td>
-      <td className="px-4 py-3 border border-gray-200 text-gray-800">
+      <td className="border border-gray-200 px-4 py-3 text-gray-800">{ward}</td>
+      <td className="border border-gray-200 px-4 py-3 text-gray-800">
         {district}
       </td>
-      <td className="px-4 py-3 border border-gray-200 text-gray-800">{city}</td>
-      <td className="px-4 py-3 border border-gray-200 text-gray-800">
+      <td className="border border-gray-200 px-4 py-3 text-gray-800">{city}</td>
+      <td className="border border-gray-200 px-4 py-3 text-gray-800">
         {country}
       </td>
     </tr>
@@ -56,28 +45,14 @@ function TableRow({
 
 function RouteComponent() {
   return (
-    <div className="min-h-screen font-sans flex justify-center">
-      <div className="w-full bg-white shadow-sm border border-gray-200 flex flex-col">
+    <div className="flex min-h-full justify-center font-sans">
+      <div className="flex w-full max-w-[1400px] min-w-0 flex-col bg-white shadow-sm">
         {/* Header */}
-        <div className="flex items-center justify-between bg-[#f0f9f6] p-3 border-b border-gray-200">
-          <h1 className="text-[#008a70] font-bold text-base md:text-lg uppercase ml-2">
-            Thông tin nhân sự
-          </h1>
-          <div className="flex gap-2">
-            <button className="flex items-center gap-2 bg-[#f5b027] hover:bg-yellow-500 text-white px-3 py-1.5 rounded text-sm font-medium transition-colors">
-              <RefreshCw className="w-4 h-4" />
-              Cập nhật
-            </button>
-            <button className="flex items-center gap-2 bg-[#00a680] hover:bg-teal-700 text-white px-3 py-1.5 rounded text-sm font-medium transition-colors">
-              <Download className="w-4 h-4" />
-              Xuất lý lịch
-            </button>
-          </div>
-        </div>
+        <PageHeader title="Thông tin nhân sự" />
 
         {/* Content */}
-        <div className="p-6 md:p-8 flex-1">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8">
+        <div className="flex-1 p-6 md:p-8">
+          <div className="grid grid-cols-1 gap-x-16 gap-y-8 lg:grid-cols-2">
             {/* Top Left */}
             <div className="space-y-4">
               <InfoRow label="Số CMND/CCCD" value="" />
@@ -109,7 +84,7 @@ function RouteComponent() {
 
           <div className="my-8 border-t border-gray-100"></div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-8">
+          <div className="grid grid-cols-1 gap-x-16 gap-y-8 lg:grid-cols-2">
             {/* Bottom Left */}
             <div className="space-y-4">
               <InfoRow label="Đối tượng chính sách" value="" />
@@ -129,23 +104,23 @@ function RouteComponent() {
 
           {/* Table */}
           <div className="mt-10 overflow-x-auto">
-            <table className="w-full text-sm text-left border-collapse min-w-[800px]">
-              <thead className="bg-[#f8fafc] text-gray-800">
+            <table className="w-full min-w-[800px] border-collapse text-left text-sm">
+              <thead className="bg-slate-50 text-gray-800">
                 <tr>
-                  <th className="px-4 py-3 font-semibold border border-gray-200 w-48"></th>
-                  <th className="px-4 py-3 font-semibold border border-gray-200">
+                  <th className="w-48 border border-gray-200 px-4 py-3 font-semibold"></th>
+                  <th className="border border-gray-200 px-4 py-3 font-semibold">
                     Số nhà
                   </th>
-                  <th className="px-4 py-3 font-semibold border border-gray-200">
+                  <th className="border border-gray-200 px-4 py-3 font-semibold">
                     Xã/Phường
                   </th>
-                  <th className="px-4 py-3 font-semibold border border-gray-200">
+                  <th className="border border-gray-200 px-4 py-3 font-semibold">
                     Huyện/Quận
                   </th>
-                  <th className="px-4 py-3 font-semibold border border-gray-200">
+                  <th className="border border-gray-200 px-4 py-3 font-semibold">
                     Tỉnh/Thành phố
                   </th>
-                  <th className="px-4 py-3 font-semibold border border-gray-200">
+                  <th className="border border-gray-200 px-4 py-3 font-semibold">
                     Quốc gia
                   </th>
                 </tr>
