@@ -119,7 +119,7 @@ function RouteComponent() {
                 <th className="w-28 border-r border-gray-200 px-4 py-3 text-center font-semibold">
                   Đến
                 </th>
-                <th className="border-r border-gray-200 px-4 py-3 font-semibold">
+                <th className="w-64 border-r border-gray-200 px-4 py-3 font-semibold">
                   Đơn vị công tác
                 </th>
                 <th className="w-64 border-r border-gray-200 px-4 py-3 font-semibold">

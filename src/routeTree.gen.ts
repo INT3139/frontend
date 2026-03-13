@@ -21,7 +21,8 @@ import { Route as protectedAuthenticatedPersonnelCvRecruitmentRouteImport } from
 import { Route as protectedAuthenticatedPersonnelCvOtherRouteImport } from './routes/(protected)/_authenticated/personnel-cv/other'
 import { Route as protectedAuthenticatedPersonnelCvHealthRouteImport } from './routes/(protected)/_authenticated/personnel-cv/health'
 import { Route as protectedAuthenticatedPersonnelCvFamilyRouteImport } from './routes/(protected)/_authenticated/personnel-cv/family'
-import { Route as protectedAuthenticatedPersonnelCvAwardsRouteImport } from './routes/(protected)/_authenticated/personnel-cv/awards'
+import { Route as protectedAuthenticatedPersonnelCvContractRouteImport } from './routes/(protected)/_authenticated/personnel-cv/contract'
+import { Route as protectedAuthenticatedPersonnelCvAwardsAndDisciplinesRouteImport } from './routes/(protected)/_authenticated/personnel-cv/awards-and-disciplines'
 import { Route as protectedAuthenticatedAcademicCvScholarlyWorksRouteImport } from './routes/(protected)/_authenticated/academic-cv/scholarly-works'
 import { Route as protectedAuthenticatedAcademicCvProjectsRouteImport } from './routes/(protected)/_authenticated/academic-cv/projects'
 
@@ -94,10 +95,16 @@ const protectedAuthenticatedPersonnelCvFamilyRoute =
     path: '/family',
     getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
   } as any)
-const protectedAuthenticatedPersonnelCvAwardsRoute =
-  protectedAuthenticatedPersonnelCvAwardsRouteImport.update({
-    id: '/awards',
-    path: '/awards',
+const protectedAuthenticatedPersonnelCvContractRoute =
+  protectedAuthenticatedPersonnelCvContractRouteImport.update({
+    id: '/contract',
+    path: '/contract',
+    getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
+  } as any)
+const protectedAuthenticatedPersonnelCvAwardsAndDisciplinesRoute =
+  protectedAuthenticatedPersonnelCvAwardsAndDisciplinesRouteImport.update({
+    id: '/awards-and-disciplines',
+    path: '/awards-and-disciplines',
     getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
   } as any)
 const protectedAuthenticatedAcademicCvScholarlyWorksRoute =
@@ -119,7 +126,8 @@ export interface FileRoutesByFullPath {
   '/': typeof protectedAuthenticatedIndexRoute
   '/academic-cv/projects': typeof protectedAuthenticatedAcademicCvProjectsRoute
   '/academic-cv/scholarly-works': typeof protectedAuthenticatedAcademicCvScholarlyWorksRoute
-  '/personnel-cv/awards': typeof protectedAuthenticatedPersonnelCvAwardsRoute
+  '/personnel-cv/awards-and-disciplines': typeof protectedAuthenticatedPersonnelCvAwardsAndDisciplinesRoute
+  '/personnel-cv/contract': typeof protectedAuthenticatedPersonnelCvContractRoute
   '/personnel-cv/family': typeof protectedAuthenticatedPersonnelCvFamilyRoute
   '/personnel-cv/health': typeof protectedAuthenticatedPersonnelCvHealthRoute
   '/personnel-cv/other': typeof protectedAuthenticatedPersonnelCvOtherRoute
@@ -134,7 +142,8 @@ export interface FileRoutesByTo {
   '/': typeof protectedAuthenticatedIndexRoute
   '/academic-cv/projects': typeof protectedAuthenticatedAcademicCvProjectsRoute
   '/academic-cv/scholarly-works': typeof protectedAuthenticatedAcademicCvScholarlyWorksRoute
-  '/personnel-cv/awards': typeof protectedAuthenticatedPersonnelCvAwardsRoute
+  '/personnel-cv/awards-and-disciplines': typeof protectedAuthenticatedPersonnelCvAwardsAndDisciplinesRoute
+  '/personnel-cv/contract': typeof protectedAuthenticatedPersonnelCvContractRoute
   '/personnel-cv/family': typeof protectedAuthenticatedPersonnelCvFamilyRoute
   '/personnel-cv/health': typeof protectedAuthenticatedPersonnelCvHealthRoute
   '/personnel-cv/other': typeof protectedAuthenticatedPersonnelCvOtherRoute
@@ -152,7 +161,8 @@ export interface FileRoutesById {
   '/(protected)/_authenticated/': typeof protectedAuthenticatedIndexRoute
   '/(protected)/_authenticated/academic-cv/projects': typeof protectedAuthenticatedAcademicCvProjectsRoute
   '/(protected)/_authenticated/academic-cv/scholarly-works': typeof protectedAuthenticatedAcademicCvScholarlyWorksRoute
-  '/(protected)/_authenticated/personnel-cv/awards': typeof protectedAuthenticatedPersonnelCvAwardsRoute
+  '/(protected)/_authenticated/personnel-cv/awards-and-disciplines': typeof protectedAuthenticatedPersonnelCvAwardsAndDisciplinesRoute
+  '/(protected)/_authenticated/personnel-cv/contract': typeof protectedAuthenticatedPersonnelCvContractRoute
   '/(protected)/_authenticated/personnel-cv/family': typeof protectedAuthenticatedPersonnelCvFamilyRoute
   '/(protected)/_authenticated/personnel-cv/health': typeof protectedAuthenticatedPersonnelCvHealthRoute
   '/(protected)/_authenticated/personnel-cv/other': typeof protectedAuthenticatedPersonnelCvOtherRoute
@@ -170,7 +180,8 @@ export interface FileRouteTypes {
     | '/'
     | '/academic-cv/projects'
     | '/academic-cv/scholarly-works'
-    | '/personnel-cv/awards'
+    | '/personnel-cv/awards-and-disciplines'
+    | '/personnel-cv/contract'
     | '/personnel-cv/family'
     | '/personnel-cv/health'
     | '/personnel-cv/other'
@@ -185,7 +196,8 @@ export interface FileRouteTypes {
     | '/'
     | '/academic-cv/projects'
     | '/academic-cv/scholarly-works'
-    | '/personnel-cv/awards'
+    | '/personnel-cv/awards-and-disciplines'
+    | '/personnel-cv/contract'
     | '/personnel-cv/family'
     | '/personnel-cv/health'
     | '/personnel-cv/other'
@@ -202,7 +214,8 @@ export interface FileRouteTypes {
     | '/(protected)/_authenticated/'
     | '/(protected)/_authenticated/academic-cv/projects'
     | '/(protected)/_authenticated/academic-cv/scholarly-works'
-    | '/(protected)/_authenticated/personnel-cv/awards'
+    | '/(protected)/_authenticated/personnel-cv/awards-and-disciplines'
+    | '/(protected)/_authenticated/personnel-cv/contract'
     | '/(protected)/_authenticated/personnel-cv/family'
     | '/(protected)/_authenticated/personnel-cv/health'
     | '/(protected)/_authenticated/personnel-cv/other'
@@ -304,11 +317,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedAuthenticatedPersonnelCvFamilyRouteImport
       parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
     }
-    '/(protected)/_authenticated/personnel-cv/awards': {
-      id: '/(protected)/_authenticated/personnel-cv/awards'
-      path: '/awards'
-      fullPath: '/personnel-cv/awards'
-      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvAwardsRouteImport
+    '/(protected)/_authenticated/personnel-cv/contract': {
+      id: '/(protected)/_authenticated/personnel-cv/contract'
+      path: '/contract'
+      fullPath: '/personnel-cv/contract'
+      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvContractRouteImport
+      parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
+    }
+    '/(protected)/_authenticated/personnel-cv/awards-and-disciplines': {
+      id: '/(protected)/_authenticated/personnel-cv/awards-and-disciplines'
+      path: '/awards-and-disciplines'
+      fullPath: '/personnel-cv/awards-and-disciplines'
+      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvAwardsAndDisciplinesRouteImport
       parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
     }
     '/(protected)/_authenticated/academic-cv/scholarly-works': {
@@ -329,7 +349,8 @@ declare module '@tanstack/react-router' {
 }
 
 interface protectedAuthenticatedPersonnelCvRouteChildren {
-  protectedAuthenticatedPersonnelCvAwardsRoute: typeof protectedAuthenticatedPersonnelCvAwardsRoute
+  protectedAuthenticatedPersonnelCvAwardsAndDisciplinesRoute: typeof protectedAuthenticatedPersonnelCvAwardsAndDisciplinesRoute
+  protectedAuthenticatedPersonnelCvContractRoute: typeof protectedAuthenticatedPersonnelCvContractRoute
   protectedAuthenticatedPersonnelCvFamilyRoute: typeof protectedAuthenticatedPersonnelCvFamilyRoute
   protectedAuthenticatedPersonnelCvHealthRoute: typeof protectedAuthenticatedPersonnelCvHealthRoute
   protectedAuthenticatedPersonnelCvOtherRoute: typeof protectedAuthenticatedPersonnelCvOtherRoute
@@ -342,8 +363,10 @@ interface protectedAuthenticatedPersonnelCvRouteChildren {
 
 const protectedAuthenticatedPersonnelCvRouteChildren: protectedAuthenticatedPersonnelCvRouteChildren =
   {
-    protectedAuthenticatedPersonnelCvAwardsRoute:
-      protectedAuthenticatedPersonnelCvAwardsRoute,
+    protectedAuthenticatedPersonnelCvAwardsAndDisciplinesRoute:
+      protectedAuthenticatedPersonnelCvAwardsAndDisciplinesRoute,
+    protectedAuthenticatedPersonnelCvContractRoute:
+      protectedAuthenticatedPersonnelCvContractRoute,
     protectedAuthenticatedPersonnelCvFamilyRoute:
       protectedAuthenticatedPersonnelCvFamilyRoute,
     protectedAuthenticatedPersonnelCvHealthRoute:

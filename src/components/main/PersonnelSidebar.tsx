@@ -8,10 +8,11 @@ const MENU_ITEMS = [
     to: '/personnel-cv/work-history',
   },
   { label: 'Quá trình Đào tạo, bồi dưỡng', to: '/personnel-cv/training' },
+  { label: 'Quá trình ký hợp đồng', to: '/personnel-cv/contract' },
   { label: 'Thông tin lương', to: '/personnel-cv/salary' },
   {
     label: 'Danh hiệu thi đua, khen thưởng, kỷ luật',
-    to: '/personnel-cv/awards',
+    to: '/personnel-cv/awards-and-disciplines',
   },
   { label: 'Tình trạng sức khỏe', to: '/personnel-cv/health' },
   { label: 'Quan hệ gia đình', to: '/personnel-cv/family' },
@@ -20,7 +21,7 @@ const MENU_ITEMS = [
 
 export function PersonnelSidebar() {
   return (
-    <div className="flex h-screen w-80 flex-col border-r border-gray-200 bg-white">
+    <div className="flex h-auto w-80 shrink-0 flex-col border-r border-gray-200 bg-white">
       <div className="border-b border-gray-200 p-6">
         <div className="flex justify-center">
           <img

@@ -2,7 +2,7 @@ import { Bell, LayoutGrid } from 'lucide-react';
 
 export function MainHeader() {
   return (
-    <header className="relative flex h-14 items-center border-b px-4">
+    <header className="relative flex h-16 items-center border-b px-4">
       <div className="absolute left-1/2 -translate-x-1/2 font-semibold uppercase">
         HỆ THỐNG QUẢN LÝ NGUỒN NHÂN LỰC
       </div>

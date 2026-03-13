@@ -1,6 +1,6 @@
 import { AppSidebar } from '@/components/main/AppSidebar';
 import { MainHeader } from '@/components/main/MainHeader';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
 
@@ -24,14 +24,15 @@ function RouteComponent() {
           '--sidebar-width-icon': '4rem',
         } as React.CSSProperties
       }
+      defaultOpen={false}
     >
       <AppSidebar />
-      <SidebarInset>
+      <main className="w-full overflow-hidden">
         <TooltipProvider>
           <MainHeader />
           <Outlet />
         </TooltipProvider>
-      </SidebarInset>
+      </main>
     </SidebarProvider>
   );
 }

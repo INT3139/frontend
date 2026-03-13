@@ -95,8 +95,8 @@ function RouteComponent() {
 
             {/* Bottom Right */}
             <div className="space-y-4">
-              <InfoRow label="Hộ chiếu" value="B8653351" />
-              <InfoRow label="Ngày cấp" value="02/01/2014" />
+              <InfoRow label="Hộ chiếu" value="BBASDA223" />
+              <InfoRow label="Ngày cấp" value="10/09/2012" />
               <InfoRow label="Nơi cấp" value="Cục xuất nhập cảnh" />
               <InfoRow label="Ghi chú" value="" />
             </div>
@@ -129,32 +129,32 @@ function RouteComponent() {
                 <TableRow
                   label="Quê quán"
                   street=""
-                  ward="Xã Thạch Kim"
-                  district="Huyện Lộc Hà"
-                  city="Tỉnh Hà Tĩnh"
+                  ward="Xã T.K"
+                  district="Huyện L.H"
+                  city="Tỉnh H.T"
                   country="Việt Nam"
                 />
                 <TableRow
                   label="Nơi sinh"
                   street=""
-                  ward="Xã Thạch Kim"
-                  district="Huyện Lộc Hà"
-                  city="Tỉnh Hà Tĩnh"
+                  ward="Xã T.K"
+                  district="Huyện L.H"
+                  city="Tỉnh H.T"
                   country="Việt Nam"
                 />
                 <TableRow
                   label="Hộ khẩu thường trú"
-                  street="Phòng 1609, tòa nhà CT3B"
-                  ward="Phường Cổ Nhuế 1"
-                  district="Quận Bắc Từ Liêm"
+                  street="Phòng 1, Toà 13B"
+                  ward="Phường Đội Cấn"
+                  district="Quận Ba Đình"
                   city="Thành phố Hà Nội"
                   country="Việt Nam"
                 />
                 <TableRow
                   label="Nơi ở hiện nay"
-                  street="Phòng 1609, tòa nhà CT3B"
-                  ward="Phường Cổ Nhuế 1"
-                  district="Quận Bắc Từ Liêm"
+                  street="Phòng 1999, tòa nhà CT1B"
+                  ward="Phường Cầu Giấy"
+                  district="Quận Cầu Giấy"
                   city="Thành phố Hà Nội"
                   country="Việt Nam"
                 />

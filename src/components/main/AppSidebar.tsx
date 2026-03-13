@@ -122,7 +122,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="transform transition-all">
       <SidebarHeader className="gap-0 p-0">
-        <div className="flex flex-row items-center justify-center p-2">
+        <div className="flex flex-row items-center justify-center py-1">
           <img src={logo} alt="UET Logo" className="h-14 w-14" />
         </div>
         <div
