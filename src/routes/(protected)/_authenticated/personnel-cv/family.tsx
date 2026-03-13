@@ -1,5 +1,5 @@
+import { ApprovalStatusBadge } from '@/components/main/ApprovalStatusBadge';
 import { CustomTablePagination } from '@/components/main/CustomTablePagination';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -10,10 +10,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { cn } from '@/lib/utils';
 import {
   APPROVAL_STATUS,
-  APPROVAL_STATUS_MAP,
+  type ApprovalStatus,
 } from '@/schemas/personnel-cv/approval';
 import { createFileRoute } from '@tanstack/react-router';
 import { Edit, Plus } from 'lucide-react';
@@ -25,8 +24,18 @@ export const Route = createFileRoute(
   component: FamilyScreen,
 });
 
+type FamilyRecord = {
+  id: number;
+  quanHe: string;
+  hoTen: string;
+  namSinh: string;
+  queQuan: string;
+  ngheNghiep: string;
+  trangThai: ApprovalStatus;
+};
+
 function FamilyScreen() {
-  const myFamily = [
+  const myFamily: FamilyRecord[] = [
     {
       id: 1,
       quanHe: 'Ông nội',
@@ -71,7 +80,7 @@ function FamilyScreen() {
       queQuan: 'Hà Nội',
       ngheNghiep: 'Công nhân',
       trangThai: APPROVAL_STATUS.PENDING,
-    }, // Để 1 cái PENDING test màu vàng
+    },
     {
       id: 6,
       quanHe: 'Mẹ đẻ',
@@ -137,7 +146,7 @@ function FamilyScreen() {
     },
   ];
 
-  const inLawFamily = [
+  const inLawFamily: FamilyRecord[] = [
     {
       id: 1,
       quanHe: 'Bố vợ',
@@ -187,10 +196,10 @@ function FamilyScreen() {
               <Table className="min-w-max">
                 <TableHeader className="border-t-2 border-t-green-600 bg-gray-50/50 hover:bg-gray-50/50">
                   <TableRow className="[&>th]:h-10 [&>th]:text-xs [&>th]:font-bold [&>th]:text-gray-700">
-                    <TableHead className="w-[60px] border-r text-center">
+                    <TableHead className="w-15 border-r text-center">
                       Thao tác
                     </TableHead>
-                    <TableHead className="w-[50px] border-r text-center">
+                    <TableHead className="w-12.5 border-r text-center">
                       STT
                     </TableHead>
                     <TableHead className="border-r">Quan hệ</TableHead>
@@ -236,19 +245,7 @@ function FamilyScreen() {
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-center">
-                          <Badge
-                            variant="outline"
-                            className={cn('border-0 px-3 font-normal', {
-                              'bg-green-100 text-green-700 hover:bg-green-100':
-                                item.trangThai === APPROVAL_STATUS.APPROVED,
-                              'bg-yellow-100 text-yellow-700 hover:bg-yellow-100':
-                                item.trangThai === APPROVAL_STATUS.PENDING,
-                              'bg-red-100 text-red-700 hover:bg-red-100':
-                                item.trangThai === APPROVAL_STATUS.REJECTED,
-                            })}
-                          >
-                            {APPROVAL_STATUS_MAP[item.trangThai]}
-                          </Badge>
+                          <ApprovalStatusBadge status={item.trangThai} />
                         </div>
                       </TableCell>
                     </TableRow>
@@ -269,6 +266,7 @@ function FamilyScreen() {
           </div>
         </CardContent>
       </Card>
+
       <Card className="mt-8 rounded-none border-none bg-transparent shadow-none">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 p-0 pb-2">
           <CardTitle className="text-sm leading-none font-bold text-green-700 uppercase">
@@ -287,10 +285,10 @@ function FamilyScreen() {
               <Table className="min-w-max">
                 <TableHeader className="border-t-2 border-t-green-600 bg-gray-50/50 hover:bg-gray-50/50">
                   <TableRow className="[&>th]:h-10 [&>th]:text-xs [&>th]:font-bold [&>th]:text-gray-700">
-                    <TableHead className="w-[60px] border-r text-center">
+                    <TableHead className="w-15 border-r text-center">
                       Thao tác
                     </TableHead>
-                    <TableHead className="w-[50px] border-r text-center">
+                    <TableHead className="w-12.5 border-r text-center">
                       STT
                     </TableHead>
                     <TableHead className="border-r">Quan hệ</TableHead>
@@ -336,19 +334,7 @@ function FamilyScreen() {
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-center">
-                          <Badge
-                            variant="outline"
-                            className={cn('border-0 px-3 font-normal', {
-                              'bg-green-100 text-green-700 hover:bg-green-100':
-                                item.trangThai === APPROVAL_STATUS.APPROVED,
-                              'bg-yellow-100 text-yellow-700 hover:bg-yellow-100':
-                                item.trangThai === APPROVAL_STATUS.PENDING,
-                              'bg-red-100 text-red-700 hover:bg-red-100':
-                                item.trangThai === APPROVAL_STATUS.REJECTED,
-                            })}
-                          >
-                            {APPROVAL_STATUS_MAP[item.trangThai]}
-                          </Badge>
+                          <ApprovalStatusBadge status={item.trangThai} />
                         </div>
                       </TableCell>
                     </TableRow>

@@ -45,7 +45,10 @@ function OtherInformationScreen() {
             <CollapsibleContent className="border-t border-gray-100 p-4 pt-2">
               <div className="space-y-4">
                 <InfoRow label="Khai rõ tiền án, tiền sự" value="" />
-                <InfoRow label="Bản thân làm việc cho chế độ cũ" value="" />
+                <InfoRow
+                  label="Bản thân làm việc cho chế độ cũ (Cơ quan,đơn vị, địa điểm, chức danh, thời gian làm việc?)"
+                  value=""
+                />
               </div>
             </CollapsibleContent>
           </Collapsible>
@@ -61,10 +64,13 @@ function OtherInformationScreen() {
             <CollapsibleContent className="border-t border-gray-100 p-4 pt-2">
               <div className="space-y-4">
                 <InfoRow
-                  label="Tham gia hoặc quan hệ với tổ chức chính trị nào ở nước ngoài"
+                  label="Tham gia hoặc quan hệ với các tổ chức chính trị, kinh tế, xã hội nào ở nước ngoài"
                   value=""
                 />
-                <InfoRow label="Có thân nhân" value="" />
+                <InfoRow
+                  label="Có thân nhân ở nước ngoài? Họ làm gì?"
+                  value=""
+                />
               </div>
             </CollapsibleContent>
           </Collapsible>
