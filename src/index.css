@@ -84,6 +84,12 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-vnu-green: #008a70;
+  --color-vnu-bg-light: #f0f9f6;
+  --color-vnu-teal: #00a680;
+  --color-vnu-yellow: #f5b027;
+  --color-vnu-status: #00d27a;
 }
 
 .dark {

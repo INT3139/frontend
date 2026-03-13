@@ -11,7 +11,7 @@ function RouteComponent() {
   return (
     <div className="flex h-screen w-full">
       <PersonnelSidebar />
-      <div className="grow overflow-y-auto bg-gray-50">
+      <div className="min-w-0 grow overflow-y-auto bg-gray-50">
         <Outlet />
       </div>
     </div>

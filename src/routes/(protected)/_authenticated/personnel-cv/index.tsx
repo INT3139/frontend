@@ -1,23 +1,12 @@
+import { InfoRow } from '@/components/main/personel-cv/InfoRow';
+import { PageHeader } from '@/components/main/personel-cv/PageHeader';
 import { createFileRoute } from '@tanstack/react-router';
-import { Download, RefreshCw } from 'lucide-react';
 
 export const Route = createFileRoute(
   '/(protected)/_authenticated/personnel-cv/',
 )({
   component: RouteComponent,
 });
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex text-sm">
-      <div className="w-56 shrink-0 font-semibold text-gray-700 md:w-64">
-        {label}
-      </div>
-      <div className="w-6 shrink-0 text-gray-600">:</div>
-      <div className="flex-1 text-gray-800">{value}</div>
-    </div>
-  );
-}
 
 function TableRow({
   label,
@@ -56,24 +45,10 @@ function TableRow({
 
 function RouteComponent() {
   return (
-    <div className="flex min-h-screen justify-center font-sans">
-      <div className="flex w-full flex-col border border-gray-200 bg-white shadow-sm">
+    <div className="flex min-h-full justify-center font-sans">
+      <div className="flex w-full max-w-[1400px] min-w-0 flex-col bg-white shadow-sm">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 bg-[#f0f9f6] p-3">
-          <h1 className="ml-2 text-base font-bold text-[#008a70] uppercase md:text-lg">
-            Thông tin nhân sự
-          </h1>
-          <div className="flex gap-2">
-            <button className="flex items-center gap-2 rounded bg-[#f5b027] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-yellow-500">
-              <RefreshCw className="h-4 w-4" />
-              Cập nhật
-            </button>
-            <button className="flex items-center gap-2 rounded bg-[#00a680] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-teal-700">
-              <Download className="h-4 w-4" />
-              Xuất lý lịch
-            </button>
-          </div>
-        </div>
+        <PageHeader title="Thông tin nhân sự" />
 
         {/* Content */}
         <div className="flex-1 p-6 md:p-8">
@@ -130,7 +105,7 @@ function RouteComponent() {
           {/* Table */}
           <div className="mt-10 overflow-x-auto">
             <table className="w-full min-w-[800px] border-collapse text-left text-sm">
-              <thead className="bg-[#f8fafc] text-gray-800">
+              <thead className="bg-slate-50 text-gray-800">
                 <tr>
                   <th className="w-48 border border-gray-200 px-4 py-3 font-semibold"></th>
                   <th className="border border-gray-200 px-4 py-3 font-semibold">
