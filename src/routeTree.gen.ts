@@ -13,6 +13,15 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as protectedAuthenticatedRouteImport } from './routes/(protected)/_authenticated'
 import { Route as protectedAuthenticatedIndexRouteImport } from './routes/(protected)/_authenticated/index'
 import { Route as protectedAuthenticatedPersonnelCvRouteImport } from './routes/(protected)/_authenticated/personnel-cv'
+import { Route as protectedAuthenticatedPersonnelCvIndexRouteImport } from './routes/(protected)/_authenticated/personnel-cv/index'
+import { Route as protectedAuthenticatedPersonnelCvWorkHistoryRouteImport } from './routes/(protected)/_authenticated/personnel-cv/work-history'
+import { Route as protectedAuthenticatedPersonnelCvTrainingRouteImport } from './routes/(protected)/_authenticated/personnel-cv/training'
+import { Route as protectedAuthenticatedPersonnelCvSalaryRouteImport } from './routes/(protected)/_authenticated/personnel-cv/salary'
+import { Route as protectedAuthenticatedPersonnelCvRecruitmentRouteImport } from './routes/(protected)/_authenticated/personnel-cv/recruitment'
+import { Route as protectedAuthenticatedPersonnelCvOtherRouteImport } from './routes/(protected)/_authenticated/personnel-cv/other'
+import { Route as protectedAuthenticatedPersonnelCvHealthRouteImport } from './routes/(protected)/_authenticated/personnel-cv/health'
+import { Route as protectedAuthenticatedPersonnelCvFamilyRouteImport } from './routes/(protected)/_authenticated/personnel-cv/family'
+import { Route as protectedAuthenticatedPersonnelCvAwardsRouteImport } from './routes/(protected)/_authenticated/personnel-cv/awards'
 import { Route as protectedAuthenticatedAcademicCvScholarlyWorksRouteImport } from './routes/(protected)/_authenticated/academic-cv/scholarly-works'
 import { Route as protectedAuthenticatedAcademicCvProjectsRouteImport } from './routes/(protected)/_authenticated/academic-cv/projects'
 
@@ -37,6 +46,60 @@ const protectedAuthenticatedPersonnelCvRoute =
     path: '/personnel-cv',
     getParentRoute: () => protectedAuthenticatedRoute,
   } as any)
+const protectedAuthenticatedPersonnelCvIndexRoute =
+  protectedAuthenticatedPersonnelCvIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
+  } as any)
+const protectedAuthenticatedPersonnelCvWorkHistoryRoute =
+  protectedAuthenticatedPersonnelCvWorkHistoryRouteImport.update({
+    id: '/work-history',
+    path: '/work-history',
+    getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
+  } as any)
+const protectedAuthenticatedPersonnelCvTrainingRoute =
+  protectedAuthenticatedPersonnelCvTrainingRouteImport.update({
+    id: '/training',
+    path: '/training',
+    getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
+  } as any)
+const protectedAuthenticatedPersonnelCvSalaryRoute =
+  protectedAuthenticatedPersonnelCvSalaryRouteImport.update({
+    id: '/salary',
+    path: '/salary',
+    getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
+  } as any)
+const protectedAuthenticatedPersonnelCvRecruitmentRoute =
+  protectedAuthenticatedPersonnelCvRecruitmentRouteImport.update({
+    id: '/recruitment',
+    path: '/recruitment',
+    getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
+  } as any)
+const protectedAuthenticatedPersonnelCvOtherRoute =
+  protectedAuthenticatedPersonnelCvOtherRouteImport.update({
+    id: '/other',
+    path: '/other',
+    getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
+  } as any)
+const protectedAuthenticatedPersonnelCvHealthRoute =
+  protectedAuthenticatedPersonnelCvHealthRouteImport.update({
+    id: '/health',
+    path: '/health',
+    getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
+  } as any)
+const protectedAuthenticatedPersonnelCvFamilyRoute =
+  protectedAuthenticatedPersonnelCvFamilyRouteImport.update({
+    id: '/family',
+    path: '/family',
+    getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
+  } as any)
+const protectedAuthenticatedPersonnelCvAwardsRoute =
+  protectedAuthenticatedPersonnelCvAwardsRouteImport.update({
+    id: '/awards',
+    path: '/awards',
+    getParentRoute: () => protectedAuthenticatedPersonnelCvRoute,
+  } as any)
 const protectedAuthenticatedAcademicCvScholarlyWorksRoute =
   protectedAuthenticatedAcademicCvScholarlyWorksRouteImport.update({
     id: '/academic-cv/scholarly-works',
@@ -52,26 +115,52 @@ const protectedAuthenticatedAcademicCvProjectsRoute =
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
-  '/personnel-cv': typeof protectedAuthenticatedPersonnelCvRoute
+  '/personnel-cv': typeof protectedAuthenticatedPersonnelCvRouteWithChildren
   '/': typeof protectedAuthenticatedIndexRoute
   '/academic-cv/projects': typeof protectedAuthenticatedAcademicCvProjectsRoute
   '/academic-cv/scholarly-works': typeof protectedAuthenticatedAcademicCvScholarlyWorksRoute
+  '/personnel-cv/awards': typeof protectedAuthenticatedPersonnelCvAwardsRoute
+  '/personnel-cv/family': typeof protectedAuthenticatedPersonnelCvFamilyRoute
+  '/personnel-cv/health': typeof protectedAuthenticatedPersonnelCvHealthRoute
+  '/personnel-cv/other': typeof protectedAuthenticatedPersonnelCvOtherRoute
+  '/personnel-cv/recruitment': typeof protectedAuthenticatedPersonnelCvRecruitmentRoute
+  '/personnel-cv/salary': typeof protectedAuthenticatedPersonnelCvSalaryRoute
+  '/personnel-cv/training': typeof protectedAuthenticatedPersonnelCvTrainingRoute
+  '/personnel-cv/work-history': typeof protectedAuthenticatedPersonnelCvWorkHistoryRoute
+  '/personnel-cv/': typeof protectedAuthenticatedPersonnelCvIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
-  '/personnel-cv': typeof protectedAuthenticatedPersonnelCvRoute
   '/': typeof protectedAuthenticatedIndexRoute
   '/academic-cv/projects': typeof protectedAuthenticatedAcademicCvProjectsRoute
   '/academic-cv/scholarly-works': typeof protectedAuthenticatedAcademicCvScholarlyWorksRoute
+  '/personnel-cv/awards': typeof protectedAuthenticatedPersonnelCvAwardsRoute
+  '/personnel-cv/family': typeof protectedAuthenticatedPersonnelCvFamilyRoute
+  '/personnel-cv/health': typeof protectedAuthenticatedPersonnelCvHealthRoute
+  '/personnel-cv/other': typeof protectedAuthenticatedPersonnelCvOtherRoute
+  '/personnel-cv/recruitment': typeof protectedAuthenticatedPersonnelCvRecruitmentRoute
+  '/personnel-cv/salary': typeof protectedAuthenticatedPersonnelCvSalaryRoute
+  '/personnel-cv/training': typeof protectedAuthenticatedPersonnelCvTrainingRoute
+  '/personnel-cv/work-history': typeof protectedAuthenticatedPersonnelCvWorkHistoryRoute
+  '/personnel-cv': typeof protectedAuthenticatedPersonnelCvIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/login': typeof LoginRoute
   '/(protected)/_authenticated': typeof protectedAuthenticatedRouteWithChildren
-  '/(protected)/_authenticated/personnel-cv': typeof protectedAuthenticatedPersonnelCvRoute
+  '/(protected)/_authenticated/personnel-cv': typeof protectedAuthenticatedPersonnelCvRouteWithChildren
   '/(protected)/_authenticated/': typeof protectedAuthenticatedIndexRoute
   '/(protected)/_authenticated/academic-cv/projects': typeof protectedAuthenticatedAcademicCvProjectsRoute
   '/(protected)/_authenticated/academic-cv/scholarly-works': typeof protectedAuthenticatedAcademicCvScholarlyWorksRoute
+  '/(protected)/_authenticated/personnel-cv/awards': typeof protectedAuthenticatedPersonnelCvAwardsRoute
+  '/(protected)/_authenticated/personnel-cv/family': typeof protectedAuthenticatedPersonnelCvFamilyRoute
+  '/(protected)/_authenticated/personnel-cv/health': typeof protectedAuthenticatedPersonnelCvHealthRoute
+  '/(protected)/_authenticated/personnel-cv/other': typeof protectedAuthenticatedPersonnelCvOtherRoute
+  '/(protected)/_authenticated/personnel-cv/recruitment': typeof protectedAuthenticatedPersonnelCvRecruitmentRoute
+  '/(protected)/_authenticated/personnel-cv/salary': typeof protectedAuthenticatedPersonnelCvSalaryRoute
+  '/(protected)/_authenticated/personnel-cv/training': typeof protectedAuthenticatedPersonnelCvTrainingRoute
+  '/(protected)/_authenticated/personnel-cv/work-history': typeof protectedAuthenticatedPersonnelCvWorkHistoryRoute
+  '/(protected)/_authenticated/personnel-cv/': typeof protectedAuthenticatedPersonnelCvIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,13 +170,30 @@ export interface FileRouteTypes {
     | '/'
     | '/academic-cv/projects'
     | '/academic-cv/scholarly-works'
+    | '/personnel-cv/awards'
+    | '/personnel-cv/family'
+    | '/personnel-cv/health'
+    | '/personnel-cv/other'
+    | '/personnel-cv/recruitment'
+    | '/personnel-cv/salary'
+    | '/personnel-cv/training'
+    | '/personnel-cv/work-history'
+    | '/personnel-cv/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
-    | '/personnel-cv'
     | '/'
     | '/academic-cv/projects'
     | '/academic-cv/scholarly-works'
+    | '/personnel-cv/awards'
+    | '/personnel-cv/family'
+    | '/personnel-cv/health'
+    | '/personnel-cv/other'
+    | '/personnel-cv/recruitment'
+    | '/personnel-cv/salary'
+    | '/personnel-cv/training'
+    | '/personnel-cv/work-history'
+    | '/personnel-cv'
   id:
     | '__root__'
     | '/login'
@@ -96,6 +202,15 @@ export interface FileRouteTypes {
     | '/(protected)/_authenticated/'
     | '/(protected)/_authenticated/academic-cv/projects'
     | '/(protected)/_authenticated/academic-cv/scholarly-works'
+    | '/(protected)/_authenticated/personnel-cv/awards'
+    | '/(protected)/_authenticated/personnel-cv/family'
+    | '/(protected)/_authenticated/personnel-cv/health'
+    | '/(protected)/_authenticated/personnel-cv/other'
+    | '/(protected)/_authenticated/personnel-cv/recruitment'
+    | '/(protected)/_authenticated/personnel-cv/salary'
+    | '/(protected)/_authenticated/personnel-cv/training'
+    | '/(protected)/_authenticated/personnel-cv/work-history'
+    | '/(protected)/_authenticated/personnel-cv/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -133,6 +248,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedAuthenticatedPersonnelCvRouteImport
       parentRoute: typeof protectedAuthenticatedRoute
     }
+    '/(protected)/_authenticated/personnel-cv/': {
+      id: '/(protected)/_authenticated/personnel-cv/'
+      path: '/'
+      fullPath: '/personnel-cv/'
+      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvIndexRouteImport
+      parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
+    }
+    '/(protected)/_authenticated/personnel-cv/work-history': {
+      id: '/(protected)/_authenticated/personnel-cv/work-history'
+      path: '/work-history'
+      fullPath: '/personnel-cv/work-history'
+      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvWorkHistoryRouteImport
+      parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
+    }
+    '/(protected)/_authenticated/personnel-cv/training': {
+      id: '/(protected)/_authenticated/personnel-cv/training'
+      path: '/training'
+      fullPath: '/personnel-cv/training'
+      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvTrainingRouteImport
+      parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
+    }
+    '/(protected)/_authenticated/personnel-cv/salary': {
+      id: '/(protected)/_authenticated/personnel-cv/salary'
+      path: '/salary'
+      fullPath: '/personnel-cv/salary'
+      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvSalaryRouteImport
+      parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
+    }
+    '/(protected)/_authenticated/personnel-cv/recruitment': {
+      id: '/(protected)/_authenticated/personnel-cv/recruitment'
+      path: '/recruitment'
+      fullPath: '/personnel-cv/recruitment'
+      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvRecruitmentRouteImport
+      parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
+    }
+    '/(protected)/_authenticated/personnel-cv/other': {
+      id: '/(protected)/_authenticated/personnel-cv/other'
+      path: '/other'
+      fullPath: '/personnel-cv/other'
+      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvOtherRouteImport
+      parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
+    }
+    '/(protected)/_authenticated/personnel-cv/health': {
+      id: '/(protected)/_authenticated/personnel-cv/health'
+      path: '/health'
+      fullPath: '/personnel-cv/health'
+      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvHealthRouteImport
+      parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
+    }
+    '/(protected)/_authenticated/personnel-cv/family': {
+      id: '/(protected)/_authenticated/personnel-cv/family'
+      path: '/family'
+      fullPath: '/personnel-cv/family'
+      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvFamilyRouteImport
+      parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
+    }
+    '/(protected)/_authenticated/personnel-cv/awards': {
+      id: '/(protected)/_authenticated/personnel-cv/awards'
+      path: '/awards'
+      fullPath: '/personnel-cv/awards'
+      preLoaderRoute: typeof protectedAuthenticatedPersonnelCvAwardsRouteImport
+      parentRoute: typeof protectedAuthenticatedPersonnelCvRoute
+    }
     '/(protected)/_authenticated/academic-cv/scholarly-works': {
       id: '/(protected)/_authenticated/academic-cv/scholarly-works'
       path: '/academic-cv/scholarly-works'
@@ -150,8 +328,47 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface protectedAuthenticatedPersonnelCvRouteChildren {
+  protectedAuthenticatedPersonnelCvAwardsRoute: typeof protectedAuthenticatedPersonnelCvAwardsRoute
+  protectedAuthenticatedPersonnelCvFamilyRoute: typeof protectedAuthenticatedPersonnelCvFamilyRoute
+  protectedAuthenticatedPersonnelCvHealthRoute: typeof protectedAuthenticatedPersonnelCvHealthRoute
+  protectedAuthenticatedPersonnelCvOtherRoute: typeof protectedAuthenticatedPersonnelCvOtherRoute
+  protectedAuthenticatedPersonnelCvRecruitmentRoute: typeof protectedAuthenticatedPersonnelCvRecruitmentRoute
+  protectedAuthenticatedPersonnelCvSalaryRoute: typeof protectedAuthenticatedPersonnelCvSalaryRoute
+  protectedAuthenticatedPersonnelCvTrainingRoute: typeof protectedAuthenticatedPersonnelCvTrainingRoute
+  protectedAuthenticatedPersonnelCvWorkHistoryRoute: typeof protectedAuthenticatedPersonnelCvWorkHistoryRoute
+  protectedAuthenticatedPersonnelCvIndexRoute: typeof protectedAuthenticatedPersonnelCvIndexRoute
+}
+
+const protectedAuthenticatedPersonnelCvRouteChildren: protectedAuthenticatedPersonnelCvRouteChildren =
+  {
+    protectedAuthenticatedPersonnelCvAwardsRoute:
+      protectedAuthenticatedPersonnelCvAwardsRoute,
+    protectedAuthenticatedPersonnelCvFamilyRoute:
+      protectedAuthenticatedPersonnelCvFamilyRoute,
+    protectedAuthenticatedPersonnelCvHealthRoute:
+      protectedAuthenticatedPersonnelCvHealthRoute,
+    protectedAuthenticatedPersonnelCvOtherRoute:
+      protectedAuthenticatedPersonnelCvOtherRoute,
+    protectedAuthenticatedPersonnelCvRecruitmentRoute:
+      protectedAuthenticatedPersonnelCvRecruitmentRoute,
+    protectedAuthenticatedPersonnelCvSalaryRoute:
+      protectedAuthenticatedPersonnelCvSalaryRoute,
+    protectedAuthenticatedPersonnelCvTrainingRoute:
+      protectedAuthenticatedPersonnelCvTrainingRoute,
+    protectedAuthenticatedPersonnelCvWorkHistoryRoute:
+      protectedAuthenticatedPersonnelCvWorkHistoryRoute,
+    protectedAuthenticatedPersonnelCvIndexRoute:
+      protectedAuthenticatedPersonnelCvIndexRoute,
+  }
+
+const protectedAuthenticatedPersonnelCvRouteWithChildren =
+  protectedAuthenticatedPersonnelCvRoute._addFileChildren(
+    protectedAuthenticatedPersonnelCvRouteChildren,
+  )
+
 interface protectedAuthenticatedRouteChildren {
-  protectedAuthenticatedPersonnelCvRoute: typeof protectedAuthenticatedPersonnelCvRoute
+  protectedAuthenticatedPersonnelCvRoute: typeof protectedAuthenticatedPersonnelCvRouteWithChildren
   protectedAuthenticatedIndexRoute: typeof protectedAuthenticatedIndexRoute
   protectedAuthenticatedAcademicCvProjectsRoute: typeof protectedAuthenticatedAcademicCvProjectsRoute
   protectedAuthenticatedAcademicCvScholarlyWorksRoute: typeof protectedAuthenticatedAcademicCvScholarlyWorksRoute
@@ -160,7 +377,7 @@ interface protectedAuthenticatedRouteChildren {
 const protectedAuthenticatedRouteChildren: protectedAuthenticatedRouteChildren =
   {
     protectedAuthenticatedPersonnelCvRoute:
-      protectedAuthenticatedPersonnelCvRoute,
+      protectedAuthenticatedPersonnelCvRouteWithChildren,
     protectedAuthenticatedIndexRoute: protectedAuthenticatedIndexRoute,
     protectedAuthenticatedAcademicCvProjectsRoute:
       protectedAuthenticatedAcademicCvProjectsRoute,
