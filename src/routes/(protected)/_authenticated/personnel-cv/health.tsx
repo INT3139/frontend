@@ -8,7 +8,7 @@ import {
   type HealthRecord,
 } from '@/schemas/personnel-cv/health';
 import { createFileRoute } from '@tanstack/react-router';
-import { Printer, RotateCcw } from 'lucide-react';
+import { Download, RotateCcw } from 'lucide-react';
 
 export const Route = createFileRoute(
   '/(protected)/_authenticated/personnel-cv/health',
@@ -33,7 +33,7 @@ function RouteComponent() {
           <RotateCcw className="h-4 w-4" /> Cập nhật
         </Button>
         <Button>
-          <Printer className="h-4 w-4" /> Xuất lý lịch
+          <Download className="h-4 w-4" /> Xuất lý lịch
         </Button>
       </HeaderWrapper>
       <InfoGroup />

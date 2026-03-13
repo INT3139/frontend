@@ -24,6 +24,7 @@ function RouteComponent() {
           '--sidebar-width-icon': '4rem',
         } as React.CSSProperties
       }
+      defaultOpen={false}
     >
       <AppSidebar />
       <main className="w-full overflow-hidden">
