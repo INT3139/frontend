@@ -354,7 +354,7 @@ export function AddCommendationForm({
                           field.handleChange(startYear);
                         }
                       }}
-                      className={`rounded-sm px-4 py-1 text-xs ${!isAcademicMode ? 'bg-background border-muted-foreground text-foreground border' : 'text-muted-foreground hover:text-foreground'}`}
+                      className={`rounded-sm px-4 py-1 text-xs ${!isAcademicMode ? 'bg-background text-foreground border' : 'text-muted-foreground hover:text-foreground'}`}
                     >
                       Năm
                     </button>
@@ -370,7 +370,7 @@ export function AddCommendationForm({
                           );
                         }
                       }}
-                      className={`rounded-sm px-4 py-1 text-xs transition-colors ${isAcademicMode ? 'bg-background border-muted-foreground text-foreground border' : 'text-muted-foreground hover:text-foreground'}`}
+                      className={`rounded-sm px-4 py-1 text-xs transition-colors ${isAcademicMode ? 'bg-background text-foreground border' : 'text-muted-foreground hover:text-foreground'}`}
                     >
                       Năm học
                     </button>
@@ -442,7 +442,7 @@ export function AddCommendationForm({
                   aria-invalid={isInvalid}
                   className={cn(
                     'cursor-pointer file:cursor-pointer',
-                    'pl-4 file:mr-4 file:border-r file:border-gray-400 file:pr-4',
+                    'pl-4 file:mr-4 file:border-r file:pr-4',
                   )}
                 />
                 <FieldDescription className="text-right">

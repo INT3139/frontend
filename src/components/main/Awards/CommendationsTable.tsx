@@ -131,7 +131,7 @@ export function CommendationsTable({
         </DialogContent>
       </Dialog>
 
-      <div className="flex flex-col gap-8 border border-t-0 border-gray-400 p-2">
+      <div className="flex flex-col gap-8 border border-t-0 p-2">
         <Table>
           <TableHeader>
             <TableRow>

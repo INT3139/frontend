@@ -128,7 +128,7 @@ export function AppSidebar() {
         <div
           className={cn(
             'px-5 py-3 pl-6',
-            'bg-blue-950 text-amber-50',
+            'bg-primary text-primary-foreground',
             'flex flex-row justify-between',
             'group-data-[collapsible=icon]:pl-5',
             'group-data-[collapsible=icon]:justify-center',
@@ -146,7 +146,7 @@ export function AppSidebar() {
             icon={<ChevronsLeft />}
             className={cn(
               'group-data-[collapsible=icon]:rotate-180',
-              'hover:bg-blue-900 hover:text-white',
+              'hover:bg-primary/50 hover:text-primary-foreground',
             )}
           />
         </div>
