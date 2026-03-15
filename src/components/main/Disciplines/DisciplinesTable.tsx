@@ -49,7 +49,7 @@ export function DisciplinesTable({ data }: { data: DisciplineRecord[] }) {
 
   return (
     <div>
-      <HeaderWrapper title="Danh hiệu thi đua">
+      <HeaderWrapper title="Kỷ luật">
         <Button>
           <PlusCircle className="h-4 w-4" /> Thêm mới
         </Button>

@@ -25,6 +25,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2025',
     is_highest_level: true,
     approval_status: APPROVAL_STATUS.PENDING,
+    attachment_url: null,
   },
   {
     decision_number: '99/QĐ-TW',
@@ -35,6 +36,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2025',
     is_highest_level: true,
     approval_status: APPROVAL_STATUS.PENDING,
+    attachment_url: null,
   },
   {
     decision_number: '445/QĐ-LĐ',
@@ -45,6 +47,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2024',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.APPROVED,
+    attachment_url: null,
   },
   {
     decision_number: '12/BC-VNU',
@@ -55,6 +58,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2022-2023',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.APPROVED,
+    attachment_url: null,
   },
   {
     decision_number: '567/QĐ-ĐHCN',
@@ -65,6 +69,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2021-2022',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.PENDING,
+    attachment_url: null,
   },
   {
     decision_number: null,
@@ -75,6 +80,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2020-2021',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.REJECTED,
+    attachment_url: null,
   },
   {
     decision_number: '88/QĐ-TTg',
@@ -85,6 +91,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: null,
     is_highest_level: true,
     approval_status: APPROVAL_STATUS.PENDING,
+    attachment_url: null,
   },
   {
     decision_number: null,
@@ -95,6 +102,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2018',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.APPROVED,
+    attachment_url: null,
   },
   {
     decision_number: '256/QĐ-ĐHQG',
@@ -106,6 +114,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: null,
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.APPROVED,
+    attachment_url: null,
   },
   {
     decision_number: null,
@@ -116,6 +125,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2013',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.APPROVED,
+    attachment_url: null,
   },
   {
     decision_number: '1112/QĐ-CTSV',
@@ -126,6 +136,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2010-2011',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.APPROVED,
+    attachment_url: null,
   },
   {
     decision_number: '567/QĐ-ĐHCN',
@@ -136,6 +147,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2021-2022',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.PENDING,
+    attachment_url: null,
   },
   {
     decision_number: '567/QĐ-ĐHCN',
@@ -146,6 +158,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2021-2022',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.PENDING,
+    attachment_url: null,
   },
   {
     decision_number: '567/QĐ-ĐHCN',
@@ -156,6 +169,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2021-2022',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.PENDING,
+    attachment_url: null,
   },
   {
     decision_number: '567/QĐ-ĐHCN',
@@ -166,6 +180,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2021-2022',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.PENDING,
+    attachment_url: null,
   },
   {
     decision_number: '567/QĐ-ĐHCN',
@@ -176,6 +191,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2021-2022',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.PENDING,
+    attachment_url: null,
   },
   {
     decision_number: '567/QĐ-ĐHCN',
@@ -186,6 +202,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2021-2022',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.PENDING,
+    attachment_url: null,
   },
   {
     decision_number: '567/QĐ-ĐHCN',
@@ -196,26 +213,7 @@ const mockCommendations: CommendationRecord[] = [
     academic_year: '2021-2022',
     is_highest_level: false,
     approval_status: APPROVAL_STATUS.PENDING,
-  },
-  {
-    decision_number: '567/QĐ-ĐHCN',
-    decision_date: '30/08/2022',
-    award_scope: AWARD_SCOPES.GRASSROOTS,
-    award_name: 'Giấy khen của Hiệu trưởng',
-    content: 'Hoàn thành xuất sắc nhiệm vụ năm học',
-    academic_year: '2021-2022',
-    is_highest_level: false,
-    approval_status: APPROVAL_STATUS.PENDING,
-  },
-  {
-    decision_number: '567/QĐ-ĐHCN',
-    decision_date: '30/08/2022',
-    award_scope: AWARD_SCOPES.GRASSROOTS,
-    award_name: 'Giấy khen của Hiệu trưởng',
-    content: 'Hoàn thành xuất sắc nhiệm vụ năm học',
-    academic_year: '2021-2022',
-    is_highest_level: false,
-    approval_status: APPROVAL_STATUS.PENDING,
+    attachment_url: null,
   },
 ];
 

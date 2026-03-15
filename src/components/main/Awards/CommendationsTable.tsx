@@ -1,6 +1,15 @@
 import { HeaderWrapper } from '@/components/main/HeaderWrapper';
 import { Button } from '@/components/ui/button';
 import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
   Empty,
   EmptyHeader,
   EmptyMedia,
@@ -15,6 +24,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import { APPROVAL_STATUS } from '@/schemas/personnel-cv/approval';
 import { AWARD_SCOPES_MAP } from '@/schemas/personnel-cv/award-scope';
 import {
   COMMENDATION_RECORD_MAP,
@@ -24,16 +34,16 @@ import {
   Check,
   CircleOff,
   Download,
-  PencilLine,
-  Play,
+  Edit,
+  Loader2,
   PlusCircle,
 } from 'lucide-react';
 import { useState } from 'react';
 import { ApprovalStatusBadge } from '../ApprovalStatusBadge';
 import { CustomTablePagination } from '../CustomTablePagination';
+import { AddCommendationForm } from './AddCommendationForm';
 
 const COMMENDATION_TABLE_HEADERS = [
-  '',
   'Thao tác',
   'STT',
   ...Object.values(COMMENDATION_RECORD_MAP),
@@ -41,26 +51,85 @@ const COMMENDATION_TABLE_HEADERS = [
 
 const PAGE_SIZE = 6;
 
-export function CommendationsTable({ data }: { data: CommendationRecord[] }) {
+export function CommendationsTable({
+  data: initialData,
+}: {
+  data: CommendationRecord[];
+}) {
+  const [tableData, setTableData] = useState(initialData);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const totalPages = Math.ceil(data.length / PAGE_SIZE);
+  const totalPages = Math.ceil(tableData.length / PAGE_SIZE) || 1;
 
-  const paginatedData = data.slice(
+  const paginatedData = tableData.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
   );
 
   return (
     <div>
-      <HeaderWrapper title="Khen thưởng">
-        <Button>
-          <PlusCircle className="h-4 w-4" /> Thêm mới
-        </Button>
-        <Button>
-          <Download className="h-4 w-4" /> Xuất lý lịch
-        </Button>
-      </HeaderWrapper>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <HeaderWrapper title="Khen thưởng">
+          <DialogTrigger asChild>
+            <Button>
+              <PlusCircle className="h-4 w-4" /> Thêm mới
+            </Button>
+          </DialogTrigger>
+          <Button>
+            <Download className="h-4 w-4" /> Xuất lý lịch
+          </Button>
+        </HeaderWrapper>
+
+        <DialogContent className="sm:max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              Thêm thông tin Khen thưởng
+            </DialogTitle>
+            <DialogDescription className="sr-only"></DialogDescription>
+          </DialogHeader>
+          <div className="-mr-2 max-h-[80vh] w-full overflow-x-hidden overflow-y-auto px-2">
+            <AddCommendationForm
+              onSubmitSuccess={(values) => {
+                const newRecord: CommendationRecord = {
+                  approval_status: APPROVAL_STATUS.PENDING,
+                  decision_number: values.decision_number || '',
+                  decision_date: values.decision_date,
+                  award_scope: values.award_scope,
+                  award_name: values.award_name,
+                  content: values.content,
+                  academic_year: values.academic_year || '',
+                  is_highest_level: false,
+                  attachment_url: values.attachment
+                    ? URL.createObjectURL(values.attachment as File)
+                    : null,
+                };
+                setTableData([newRecord, ...tableData]);
+                setIsDialogOpen(false);
+              }}
+              renderActions={(isSubmitting) => (
+                <>
+                  <DialogClose asChild>
+                    <Button
+                      type="button"
+                      variant={'secondary'}
+                      disabled={isSubmitting}
+                    >
+                      Đóng
+                    </Button>
+                  </DialogClose>
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Xác nhận
+                  </Button>
+                </>
+              )}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <div className="flex flex-col gap-8 border border-t-0 border-gray-400 p-2">
         <Table>
@@ -84,26 +153,17 @@ export function CommendationsTable({ data }: { data: CommendationRecord[] }) {
             {paginatedData.map((commendation, index) => (
               <TableRow key={index}>
                 <TableCell>
-                  <div className="flex justify-center">
-                    <Button
-                      size="icon-sm"
-                      variant="outline"
-                      className="border-0 bg-transparent shadow-none"
-                    >
-                      <Play />
-                    </Button>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex justify-center">
-                    <Button
-                      size="icon-sm"
-                      variant="outline"
-                      className="border-0 bg-transparent shadow-none"
-                    >
-                      <PencilLine />
-                    </Button>
-                  </div>
+                  {commendation.approval_status === APPROVAL_STATUS.PENDING ? (
+                    <div className="flex justify-center">
+                      <Button
+                        size="icon-sm"
+                        variant="outline"
+                        className="border-0 bg-transparent shadow-none"
+                      >
+                        <Edit />
+                      </Button>
+                    </div>
+                  ) : null}
                 </TableCell>
                 <TableCell className="text-center">{index + 1}</TableCell>
                 <TableCell>
