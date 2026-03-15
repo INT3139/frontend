@@ -1,19 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { ChevronLeft, ChevronRight, Edit, Plus } from 'lucide-react';
-import { useState } from 'react';
-import { Button } from '../../../../components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '../../../../components/ui/card';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from '../../../../components/ui/pagination';
+import { ApprovalStatusBadge } from '@/components/main/ApprovalStatusBadge';
+import { CustomTablePagination } from '@/components/main/CustomTablePagination';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -21,7 +9,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../../../../components/ui/table';
+} from '@/components/ui/table';
+import {
+  APPROVAL_STATUS,
+  type ApprovalStatus,
+} from '@/schemas/personnel-cv/approval';
+import { createFileRoute } from '@tanstack/react-router';
+import { Edit, Plus } from 'lucide-react';
+import { useState } from 'react';
 
 export const Route = createFileRoute(
   '/(protected)/_authenticated/personnel-cv/family',
@@ -29,8 +24,18 @@ export const Route = createFileRoute(
   component: FamilyScreen,
 });
 
+type FamilyRecord = {
+  id: number;
+  quanHe: string;
+  hoTen: string;
+  namSinh: string;
+  queQuan: string;
+  ngheNghiep: string;
+  trangThai: ApprovalStatus;
+};
+
 function FamilyScreen() {
-  const myFamily = [
+  const myFamily: FamilyRecord[] = [
     {
       id: 1,
       quanHe: 'Ông nội',
@@ -38,7 +43,7 @@ function FamilyScreen() {
       namSinh: '1936',
       queQuan: 'Hà Nội',
       ngheNghiep: 'Nông dân',
-      trangThai: 'Đã mất',
+      trangThai: APPROVAL_STATUS.APPROVED,
     },
     {
       id: 2,
@@ -47,7 +52,7 @@ function FamilyScreen() {
       namSinh: '1940',
       queQuan: 'Hà Nội',
       ngheNghiep: 'Nông dân',
-      trangThai: 'Đã mất',
+      trangThai: APPROVAL_STATUS.APPROVED,
     },
     {
       id: 3,
@@ -56,7 +61,7 @@ function FamilyScreen() {
       namSinh: '1939',
       queQuan: 'Hà Nội',
       ngheNghiep: 'Nông dân',
-      trangThai: 'Đã mất',
+      trangThai: APPROVAL_STATUS.APPROVED,
     },
     {
       id: 4,
@@ -65,7 +70,7 @@ function FamilyScreen() {
       namSinh: '1944',
       queQuan: 'Hà Nội',
       ngheNghiep: 'Nông dân',
-      trangThai: 'Đã mất',
+      trangThai: APPROVAL_STATUS.APPROVED,
     },
     {
       id: 5,
@@ -74,7 +79,7 @@ function FamilyScreen() {
       namSinh: '1963',
       queQuan: 'Hà Nội',
       ngheNghiep: 'Công nhân',
-      trangThai: 'Còn sống',
+      trangThai: APPROVAL_STATUS.PENDING,
     },
     {
       id: 6,
@@ -83,74 +88,65 @@ function FamilyScreen() {
       namSinh: '1966',
       queQuan: 'Hà Nội',
       ngheNghiep: 'Công nhân',
-      trangThai: 'Còn sống',
+      trangThai: APPROVAL_STATUS.APPROVED,
     },
     {
       id: 7,
       quanHe: 'Anh trai',
       hoTen: 'Nguyễn Thanh Độ',
-      namSinh: '1982',
+      namSinh: '1985',
       queQuan: 'Hà Nội',
       ngheNghiep: 'Kinh doanh',
-      trangThai: 'Còn sống',
+      trangThai: APPROVAL_STATUS.APPROVED,
     },
     {
       id: 8,
-      quanHe: 'Em gái',
-      hoTen: 'Nguyễn Thị G',
-      namSinh: '1988',
-      queQuan: 'Hà Nội',
-      ngheNghiep: 'Kế toán',
-      trangThai: 'Còn sống',
-    },
-    {
-      id: 9,
-      quanHe: 'Em gái',
-      hoTen: 'Nguyễn Thị H',
-      namSinh: '1991',
-      queQuan: 'Hà Nội',
-      ngheNghiep: 'Kế toán',
-      trangThai: 'Còn sống',
-    },
-    {
-      id: 10,
       quanHe: 'Vợ',
       hoTen: 'Nguyễn Thị B',
       namSinh: '1988',
       queQuan: 'Hà Nội',
       ngheNghiep: 'Giáo viên',
-      trangThai: 'Còn sống',
+      trangThai: APPROVAL_STATUS.APPROVED,
     },
     {
-      id: 11,
+      id: 9,
       quanHe: 'Con trai',
       hoTen: 'Nguyễn Sói',
       namSinh: '2013',
       queQuan: 'Hà Nội',
       ngheNghiep: 'Học sinh',
-      trangThai: 'Còn sống',
+      trangThai: APPROVAL_STATUS.APPROVED,
+    },
+    {
+      id: 10,
+      quanHe: 'Con gái',
+      hoTen: 'Nguyễn Cừu',
+      namSinh: '2016',
+      queQuan: 'Hà Nội',
+      ngheNghiep: 'Học sinh',
+      trangThai: APPROVAL_STATUS.APPROVED,
+    },
+    {
+      id: 11,
+      quanHe: 'Em gái',
+      hoTen: 'Nguyễn Thị G',
+      namSinh: '1995',
+      queQuan: 'Hà Nội',
+      ngheNghiep: 'Kế toán',
+      trangThai: APPROVAL_STATUS.APPROVED,
     },
     {
       id: 12,
-      quanHe: 'Con gái',
-      hoTen: 'Nguyễn Cừu',
-      namSinh: '2015',
+      quanHe: 'Anh rể',
+      hoTen: 'Trần Văn T',
+      namSinh: '1990',
       queQuan: 'Hà Nội',
-      ngheNghiep: 'Học sinh',
-      trangThai: 'Còn sống',
-    },
-    {
-      id: 13,
-      quanHe: 'Con trai',
-      hoTen: 'Nguyễn Văn T',
-      namSinh: '2017',
-      queQuan: 'Hà Nội',
-      ngheNghiep: 'Học sinh',
-      trangThai: 'Còn sống',
+      ngheNghiep: 'Kỹ sư',
+      trangThai: APPROVAL_STATUS.APPROVED,
     },
   ];
 
-  const inLawFamily = [
+  const inLawFamily: FamilyRecord[] = [
     {
       id: 1,
       quanHe: 'Bố vợ',
@@ -158,22 +154,27 @@ function FamilyScreen() {
       namSinh: '1960',
       queQuan: 'Hà Nội',
       ngheNghiep: 'Nông dân',
-      trangThai: 'Còn sống',
+      trangThai: APPROVAL_STATUS.APPROVED,
     },
     {
       id: 2,
       quanHe: 'Mẹ vợ',
       hoTen: 'Nguyễn Mẹ Vợ',
       namSinh: '1965',
-      queQuan: 'Cao Bằng',
+      queQuan: 'Hà Nội',
       ngheNghiep: 'Nông dân',
-      trangThai: 'Còn sống',
+      trangThai: APPROVAL_STATUS.PENDING,
     },
   ];
 
-  const rowsPerPage = 10;
-  const [startIndex, setStartIndex] = useState(0);
-  const [endIndex, setEndIndex] = useState(rowsPerPage);
+  const PAGE_SIZE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(myFamily.length / PAGE_SIZE);
+
+  const paginatedData = myFamily.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
 
   return (
     <div className="min-h-screen space-y-10 bg-white p-4">
@@ -193,8 +194,8 @@ function FamilyScreen() {
           <div className="rounded-md border border-gray-200">
             <div className="overflow-x-auto">
               <Table className="min-w-max">
-                <TableHeader className="border-t-2 border-t-green-600 bg-white hover:bg-transparent">
-                  <TableRow className="[&>th]:text-xs [&>th]:font-bold [&>th]:text-black">
+                <TableHeader className="border-t-2 border-t-green-600 bg-gray-50/50 hover:bg-gray-50/50">
+                  <TableRow className="[&>th]:h-10 [&>th]:text-xs [&>th]:font-bold [&>th]:text-gray-700">
                     <TableHead className="w-15 border-r text-center">
                       Thao tác
                     </TableHead>
@@ -211,11 +212,11 @@ function FamilyScreen() {
                     <TableHead className="text-center">Trạng thái</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody className="text-xs">
-                  {myFamily.slice(startIndex, endIndex).map((item, index) => (
+                <TableBody className="text-sm">
+                  {paginatedData.map((item, index) => (
                     <TableRow
                       key={item.id}
-                      className="border-b hover:bg-gray-50"
+                      className="border-b hover:bg-gray-50 [&>td]:py-1"
                     >
                       <TableCell className="border-r text-center">
                         <Button
@@ -227,10 +228,14 @@ function FamilyScreen() {
                         </Button>
                       </TableCell>
                       <TableCell className="border-r text-center">
-                        {startIndex + index + 1}
+                        {(currentPage - 1) * PAGE_SIZE + index + 1}
                       </TableCell>
-                      <TableCell className="border-r">{item.quanHe}</TableCell>
-                      <TableCell className="border-r">{item.hoTen}</TableCell>
+                      <TableCell className="border-r font-medium">
+                        {item.quanHe}
+                      </TableCell>
+                      <TableCell className="border-r font-medium">
+                        {item.hoTen}
+                      </TableCell>
                       <TableCell className="border-r text-center">
                         {item.namSinh}
                       </TableCell>
@@ -238,12 +243,10 @@ function FamilyScreen() {
                       <TableCell className="border-r">
                         {item.ngheNghiep}
                       </TableCell>
-                      <TableCell className="text-center">
-                        <span
-                          className={`rounded-full px-2 py-1 text-[10px] ${item.trangThai === 'Còn sống' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}
-                        >
-                          {item.trangThai}
-                        </span>
+                      <TableCell>
+                        <div className="flex justify-center">
+                          <ApprovalStatusBadge status={item.trangThai} />
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -251,48 +254,13 @@ function FamilyScreen() {
               </Table>
             </div>
 
-            {myFamily.length > rowsPerPage && (
-              <div className="flex justify-center border-t bg-gray-50/50 py-1 pr-4">
-                <Pagination className="mx-0 w-auto">
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationLink
-                        href="#"
-                        className={
-                          startIndex === 0
-                            ? 'pointer-events-none opacity-50'
-                            : 'cursor-pointer'
-                        }
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setStartIndex(Math.max(0, startIndex - rowsPerPage));
-                          setEndIndex(
-                            Math.max(rowsPerPage, endIndex - rowsPerPage),
-                          );
-                        }}
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink
-                        href="#"
-                        className={
-                          endIndex >= myFamily.length
-                            ? 'pointer-events-none opacity-50'
-                            : 'cursor-pointer'
-                        }
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setStartIndex(startIndex + rowsPerPage);
-                          setEndIndex(endIndex + rowsPerPage);
-                        }}
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </PaginationLink>
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
+            {totalPages > 1 && (
+              <div className="flex justify-end border-t bg-gray-50/30 py-2 pr-4">
+                <CustomTablePagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
               </div>
             )}
           </div>
@@ -315,8 +283,8 @@ function FamilyScreen() {
           <div className="rounded-md border border-gray-200">
             <div className="overflow-x-auto">
               <Table className="min-w-max">
-                <TableHeader className="border-t-2 border-t-green-600 bg-white hover:bg-transparent">
-                  <TableRow className="[&>th]:text-xs [&>th]:font-bold [&>th]:text-black">
+                <TableHeader className="border-t-2 border-t-green-600 bg-gray-50/50 hover:bg-gray-50/50">
+                  <TableRow className="[&>th]:h-10 [&>th]:text-xs [&>th]:font-bold [&>th]:text-gray-700">
                     <TableHead className="w-15 border-r text-center">
                       Thao tác
                     </TableHead>
@@ -333,11 +301,11 @@ function FamilyScreen() {
                     <TableHead className="text-center">Trạng thái</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody className="text-xs">
+                <TableBody className="text-sm">
                   {inLawFamily.map((item, index) => (
                     <TableRow
                       key={item.id}
-                      className="border-b hover:bg-gray-50"
+                      className="border-b hover:bg-gray-50 [&>td]:py-1"
                     >
                       <TableCell className="border-r text-center">
                         <Button
@@ -364,12 +332,10 @@ function FamilyScreen() {
                       <TableCell className="border-r">
                         {item.ngheNghiep}
                       </TableCell>
-                      <TableCell className="text-center">
-                        <span
-                          className={`rounded-full px-2 py-1 text-[10px] ${item.trangThai === 'Còn sống' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}
-                        >
-                          {item.trangThai}
-                        </span>
+                      <TableCell>
+                        <div className="flex justify-center">
+                          <ApprovalStatusBadge status={item.trangThai} />
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
