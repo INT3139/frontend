@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import pluginQuery from '@tanstack/eslint-plugin-query';
 // Note the `/flat` suffix here, the difference from default entry is that
 // `/flat` added `name` property to the exported object to improve
 // [config-inspector](https://eslint.org/blog/2024/04/eslint-config-inspector/) experience.
@@ -25,4 +26,5 @@ export default defineConfig([
     },
   },
   eslintConfigPrettier,
+  ...pluginQuery.configs['flat/recommended'],
 ]);
