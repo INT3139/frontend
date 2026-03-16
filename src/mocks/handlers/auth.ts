@@ -4,10 +4,10 @@ import { HttpResponse, http } from 'msw';
 
 const mockUser = {
   id: 2,
-  username: 'namnv',
+  username: 'annv',
   password: '123',
-  fullName: 'Nguyễn Văn Nam',
-  emailVnu: 'namnv@vnu.edu.vn',
+  fullName: 'Nguyễn Văn An',
+  emailVnu: 'annv@vnu.edu.vn',
   unitId: 5,
 };
 

@@ -7,16 +7,19 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
 
-const router = createRouter({ routeTree, defaultNotFoundComponent: NotFound });
+const queryClient = new QueryClient();
 
-// Register the router instance for type safety
+const router = createRouter({
+  routeTree,
+  defaultNotFoundComponent: NotFound,
+  context: { queryClient },
+});
+
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
 }
-
-const queryClient = new QueryClient();
 
 async function enableMocking() {
   if (!import.meta.env.DEV || !import.meta.env.VITE_ENABLE_MOCK_API) return;
@@ -25,7 +28,9 @@ async function enableMocking() {
 
   // `worker.start()` returns a Promise that resolves
   // once the Service Worker is up and ready to intercept requests.
-  return worker.start();
+  return worker.start({
+    onUnhandledRequest: 'bypass',
+  });
 }
 
 const rootElement = document.getElementById('root');
@@ -39,7 +44,7 @@ enableMocking().then(() => {
     root.render(
       <StrictMode>
         <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
+          <RouterProvider router={router} context={{ queryClient }} />
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </StrictMode>,
