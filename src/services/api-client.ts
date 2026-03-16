@@ -1,29 +1,28 @@
-import axios from 'axios';
+import ky from 'ky';
 
 const API_URL =
   import.meta.env.PROD || !import.meta.env.VITE_ENABLE_MOCK_API
     ? import.meta.env.VITE_API_URL
     : import.meta.env.VITE_MOCK_API_PREFIX;
 
-const API = axios.create({
-  baseURL: API_URL,
+const apiClient = ky.create({
+  prefixUrl: `${API_URL}/`, // https://github.com/sindresorhus/ky?tab=readme-ov-file#baseurl
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: false, // set true only if the API uses cookies
+  credentials: 'include',
+  hooks: {
+    beforeRequest: [
+      (request) => {
+        const token = localStorage.getItem('access_token');
+
+        if (token) {
+          request.headers.set('Authorization', `Bearer ${token}`);
+        }
+      },
+    ],
+  },
 });
 
-API.interceptors.request.use(
-  (config) => {
-    // Attach auth token from storage
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
-
-export default API;
+export default apiClient;

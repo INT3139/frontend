@@ -22,9 +22,9 @@ function RouteComponent() {
 
   return (
     <div className="flex w-full flex-col gap-8">
-      <CommendationsTable data={data?.data?.commendations ?? []} />
-      <EmulationTitlesTable data={data?.data?.emulation_titles ?? []} />
-      <DisciplinesTable data={data?.data?.disciplines ?? []} />
+      <CommendationsTable data={data?.commendations ?? []} />
+      <EmulationTitlesTable data={data?.emulation_titles ?? []} />
+      <DisciplinesTable data={data?.disciplines ?? []} />
     </div>
   );
 }

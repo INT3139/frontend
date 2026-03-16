@@ -1,6 +1,14 @@
+import { shortenName } from '@/lib/shorten-name';
+import { Route as AuthLayoutRoute } from '@/routes/(protected)/_authenticated';
 import { Bell, LayoutGrid } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+
+const defaultAvatar =
+  'https://cdn2.fptshop.com.vn/small/avatar_trang_1_cd729c335b.jpg';
 
 export function MainHeader() {
+  const profile = AuthLayoutRoute.useRouteContext();
+
   return (
     <header className="relative flex h-16 items-center border-b px-4">
       <div className="absolute left-1/2 -translate-x-1/2 font-semibold uppercase">
@@ -11,12 +19,11 @@ export function MainHeader() {
         <Bell />
         <LayoutGrid />
         <div className="flex items-center gap-2">
-          <img
-            className="h-10 w-10 rounded-full object-cover"
-            src="https://cdn2.fptshop.com.vn/small/avatar_trang_1_cd729c335b.jpg"
-            alt="rounded avatar"
-          />
-          <span className="font-medium">Nguyễn Văn A</span>
+          <Avatar>
+            <AvatarImage src={defaultAvatar} />
+            <AvatarFallback>{shortenName(profile?.fullName)}</AvatarFallback>
+          </Avatar>
+          <span className="font-medium">{profile?.fullName}</span>
         </div>
       </div>
     </header>

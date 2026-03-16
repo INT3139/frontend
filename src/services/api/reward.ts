@@ -1,7 +1,8 @@
+import { removeFirstSlash } from '@/lib/remove-first-slash';
 import type { CommendationRecord } from '@/schemas/personnel-cv/commendation';
 import type { DisciplineRecord } from '@/schemas/personnel-cv/discipline';
 import type { EmulationTitleRecord } from '@/schemas/personnel-cv/emulation-title';
-import API from '@/services/api-client';
+import apiClient from '@/services/api-client';
 import { ENDPOINTS } from '../endpoints';
 
 export type AwardsAndDisciplinesResponse = {
@@ -13,10 +14,12 @@ export type AwardsAndDisciplinesResponse = {
   };
 };
 
-export const getAwardsAndDisciplines =
-  async (): Promise<AwardsAndDisciplinesResponse> => {
-    const response = await API.get<AwardsAndDisciplinesResponse>(
-      ENDPOINTS.reward.me,
-    );
-    return response.data;
-  };
+export const getAwardsAndDisciplines = async (): Promise<
+  AwardsAndDisciplinesResponse['data']
+> => {
+  const response = await apiClient
+    .get(removeFirstSlash(ENDPOINTS.reward.me))
+    .json<AwardsAndDisciplinesResponse>();
+
+  return response.data;
+};

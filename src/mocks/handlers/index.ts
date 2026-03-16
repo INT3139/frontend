@@ -1,4 +1,14 @@
-import { handlers as authHandlers } from './auth';
-import { handlers as rewardHandlers } from './reward';
+import { type RequestHandler } from 'msw';
 
-export const handlers = [...authHandlers, ...rewardHandlers];
+// Glob import any file in this directory except index.ts
+// https://vite.dev/guide/features#glob-import
+const modules = import.meta.glob<{ handlers: RequestHandler[] }>(
+  './!(index).ts',
+  {
+    eager: true,
+  },
+);
+
+export const handlers = Object.values(modules).flatMap(
+  (module) => module.handlers ?? [],
+);
