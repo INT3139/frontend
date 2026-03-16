@@ -5,6 +5,7 @@ import NotFound from '@/components/main/NotFound';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { CustomErrorComponent } from './components/main/CustomErrorComponent';
 import { routeTree } from './routeTree.gen';
 
 const queryClient = new QueryClient();
@@ -12,6 +13,7 @@ const queryClient = new QueryClient();
 const router = createRouter({
   routeTree,
   defaultNotFoundComponent: NotFound,
+  defaultErrorComponent: CustomErrorComponent,
   context: { queryClient },
 });
 

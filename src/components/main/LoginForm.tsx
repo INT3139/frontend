@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { login } from '@/services/api/auth';
+import { services } from '@/services/api';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -39,7 +39,7 @@ export function LoginForm() {
   const navigate = useNavigate();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: login,
+    mutationFn: services.login,
     onSuccess: async (data) => {
       if (import.meta.env.DEV) {
         await new Promise((resolve) => setTimeout(resolve, 300));

@@ -243,6 +243,11 @@ export const handlers = [
   http.get(
     import.meta.env.VITE_MOCK_API_PREFIX + ENDPOINTS.reward.me,
     withAuth(() => {
+      // return new HttpResponse(null, {
+      //   status: 500,
+      //   statusText: 'Internal Server Error',
+      // });
+
       return HttpResponse.json({
         status: 'success',
         data: {
