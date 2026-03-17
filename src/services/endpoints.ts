@@ -8,6 +8,9 @@ const profile = {
 
 const reward = {
   me: '/reward/me',
+  commendation: '/reward/commendations',
+  emulationTitle: '/reward/titles',
+  discipline: '/reward/discipline',
 };
 
 export const ENDPOINTS = {

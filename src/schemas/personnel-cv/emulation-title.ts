@@ -1,12 +1,12 @@
 import type { ApprovalStatus } from './approval';
 
 export const EMULATION_TITLE_RECORD = {
-  APPROVAL_STATUS: 'approval_status',
-  DECISION_NUMBER: 'decision_number',
-  DECISION_DATE: 'decision_date',
-  TITLE_NAME: 'title_name',
-  IS_HIGHEST_LEVEL: 'is_highest_level',
-  ATTACHMENT_URL: 'attachment_url',
+  APPROVAL_STATUS: 'approvalStatus',
+  DECISION_NUMBER: 'decisionNumber',
+  DECISION_DATE: 'decisionDate',
+  TITLE_NAME: 'titleName',
+  IS_HIGHEST_LEVEL: 'isHighestLevel',
+  ATTACHMENT_URL: 'attachmentUrl',
 } as const;
 
 export const EMULATION_TITLE_RECORD_MAP = {

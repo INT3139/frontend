@@ -2,15 +2,15 @@ import type { ApprovalStatus } from './approval';
 import type { AwardScope } from './award-scope';
 
 export const COMMENDATION_RECORD = {
-  APPROVAL_STATUS: 'approval_status',
-  DECISION_NUMBER: 'decision_number',
-  DECISION_DATE: 'decision_date',
-  AWARD_SCOPE: 'award_scope',
-  AWARD_NAME: 'award_name',
+  APPROVAL_STATUS: 'approvalStatus',
+  DECISION_NUMBER: 'decisionNumber',
+  DECISION_DATE: 'decisionDate',
+  AWARD_SCOPE: 'awardScope',
+  AWARD_NAME: 'awardName',
   CONTENT: 'content',
-  ACADEMIC_YEAR: 'academic_year',
-  IS_HIGHEST_LEVEL: 'is_highest_level',
-  ATTACHMENT_URL: 'attachment_url',
+  ACADEMIC_YEAR: 'academicYear',
+  IS_HIGHEST_LEVEL: 'isHighestLevel',
+  ATTACHMENT_URL: 'attachmentUrl',
 } as const;
 
 export const COMMENDATION_RECORD_MAP = {
@@ -27,12 +27,12 @@ export const COMMENDATION_RECORD_MAP = {
 
 export type CommendationRecord = {
   [COMMENDATION_RECORD.APPROVAL_STATUS]: ApprovalStatus;
-  [COMMENDATION_RECORD.DECISION_NUMBER]: string;
+  [COMMENDATION_RECORD.DECISION_NUMBER]?: string;
   [COMMENDATION_RECORD.DECISION_DATE]: string;
   [COMMENDATION_RECORD.AWARD_SCOPE]: AwardScope;
   [COMMENDATION_RECORD.AWARD_NAME]: string;
   [COMMENDATION_RECORD.CONTENT]: string;
-  [COMMENDATION_RECORD.ACADEMIC_YEAR]: string;
+  [COMMENDATION_RECORD.ACADEMIC_YEAR]?: string;
   [COMMENDATION_RECORD.IS_HIGHEST_LEVEL]: boolean;
   [COMMENDATION_RECORD.ATTACHMENT_URL]: string | null;
 };

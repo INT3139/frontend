@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Empty,
@@ -16,15 +15,12 @@ import {
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import {
-  APPROVAL_STATUS,
-  APPROVAL_STATUS_MAP,
-} from '@/schemas/personnel-cv/approval';
-import {
   EMULATION_TITLE_RECORD_MAP,
   type EmulationTitleRecord,
 } from '@/schemas/personnel-cv/emulation-title';
 import { Check, CircleOff, PencilLine, Play, PlusCircle } from 'lucide-react';
 import { useState } from 'react';
+import { ApprovalStatusBadge } from '../ApprovalStatusBadge';
 import { CustomTablePagination } from '../CustomTablePagination';
 import { HeaderWrapper } from '../HeaderWrapper';
 
@@ -104,35 +100,23 @@ export function EmulationTitlesTable({
                 <TableCell className="text-center">{index + 1}</TableCell>
                 <TableCell>
                   <div className="flex justify-center">
-                    <Badge
-                      className={cn('px-3', {
-                        'bg-green-200 text-green-700':
-                          emulationTitle.approval_status ===
-                          APPROVAL_STATUS.APPROVED,
-                        'bg-yellow-200 text-yellow-700':
-                          emulationTitle.approval_status ===
-                          APPROVAL_STATUS.PENDING,
-                        'bg-red-200 text-red-700':
-                          emulationTitle.approval_status ===
-                          APPROVAL_STATUS.REJECTED,
-                      })}
-                    >
-                      {APPROVAL_STATUS_MAP[emulationTitle.approval_status]}
-                    </Badge>
+                    <ApprovalStatusBadge
+                      status={emulationTitle.approvalStatus}
+                    />
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">
-                  {emulationTitle.decision_number}
+                  {emulationTitle.decisionNumber}
                 </TableCell>
                 <TableCell className="text-center">
-                  {emulationTitle.decision_date}
+                  {emulationTitle.decisionDate}
                 </TableCell>
                 <TableCell className="max-w-72 min-w-72 text-wrap whitespace-normal">
-                  {emulationTitle.title_name}
+                  {emulationTitle.titleName}
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-center">
-                    {emulationTitle.is_highest_level && <Check />}
+                    {emulationTitle.isHighestLevel && <Check />}
                   </div>
                 </TableCell>
               </TableRow>

@@ -30,8 +30,10 @@ import {
   COMMENDATION_RECORD,
   COMMENDATION_RECORD_MAP,
 } from '@/schemas/personnel-cv/commendation';
+import { createCommendation } from '@/services/api/reward';
 import { useForm } from '@tanstack/react-form';
-import { useEffect, useRef, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import * as z from 'zod';
 import { DatePickerInput } from '../DatePickerInput';
@@ -141,7 +143,14 @@ export function AddCommendationForm({
   renderActions,
   onSubmitSuccess,
 }: AddCommendationFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutate, isPending } = useMutation({
+    mutationFn: (record: z.infer<typeof formSchema>) =>
+      createCommendation(record),
+    onSuccess: (_, value) => {
+      onSubmitSuccess?.(value);
+      toast.success('Thêm thông tin Khen thưởng thành công!');
+    },
+  });
 
   const form = useForm({
     defaultValues: {
@@ -157,17 +166,12 @@ export function AddCommendationForm({
       onChangeAsync: formSchema,
     },
     onSubmit: async ({ value }) => {
-      setIsSubmitting(true);
-      try {
-        if (import.meta.env.DEV) {
-          console.log(value);
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-        onSubmitSuccess?.(value);
-        toast.success('Thêm thông tin Khen thưởng thành công!');
-      } finally {
-        setIsSubmitting(false);
+      if (import.meta.env.DEV) {
+        console.log(value);
+        await new Promise((resolve) => setTimeout(resolve, 300));
       }
+
+      mutate(value);
     },
   });
 
@@ -460,7 +464,7 @@ export function AddCommendationForm({
 
       {renderActions && (
         <div className="mt-6 flex gap-4 sm:justify-center">
-          {renderActions(isSubmitting)}
+          {renderActions(isPending)}
         </div>
       )}
     </form>

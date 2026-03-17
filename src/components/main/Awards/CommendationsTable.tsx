@@ -92,15 +92,15 @@ export function CommendationsTable({
             <AddCommendationForm
               onSubmitSuccess={(values) => {
                 const newRecord: CommendationRecord = {
-                  approval_status: APPROVAL_STATUS.PENDING,
-                  decision_number: values.decision_number || '',
-                  decision_date: values.decision_date,
-                  award_scope: values.award_scope,
-                  award_name: values.award_name,
+                  approvalStatus: APPROVAL_STATUS.PENDING,
+                  decisionNumber: values.decisionNumber || '',
+                  decisionDate: values.decisionDate,
+                  awardScope: values.awardScope,
+                  awardName: values.awardName,
                   content: values.content,
-                  academic_year: values.academic_year || '',
-                  is_highest_level: false,
-                  attachment_url: values.attachment
+                  academicYear: values.academicYear || '',
+                  isHighestLevel: false,
+                  attachmentUrl: values.attachment
                     ? URL.createObjectURL(values.attachment as File)
                     : null,
                 };
@@ -153,7 +153,7 @@ export function CommendationsTable({
             {paginatedData.map((commendation, index) => (
               <TableRow key={index}>
                 <TableCell>
-                  {commendation.approval_status === APPROVAL_STATUS.PENDING ? (
+                  {commendation.approvalStatus === APPROVAL_STATUS.PENDING ? (
                     <div className="flex justify-center">
                       <Button
                         size="icon-sm"
@@ -165,35 +165,35 @@ export function CommendationsTable({
                     </div>
                   ) : null}
                 </TableCell>
-                <TableCell className="text-center">{index + 1}</TableCell>
+                <TableCell className="text-center">
+                  {index + (currentPage - 1) * PAGE_SIZE + 1}
+                </TableCell>
                 <TableCell>
                   <div className="flex justify-center">
-                    <ApprovalStatusBadge
-                      status={commendation.approval_status}
-                    />
+                    <ApprovalStatusBadge status={commendation.approvalStatus} />
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">
-                  {commendation.decision_number}
+                  {commendation.decisionNumber}
                 </TableCell>
                 <TableCell className="text-center">
-                  {commendation.decision_date}
+                  {commendation.decisionDate}
                 </TableCell>
                 <TableCell className="text-center">
-                  {AWARD_SCOPES_MAP[commendation.award_scope]}
+                  {AWARD_SCOPES_MAP[commendation.awardScope]}
                 </TableCell>
                 <TableCell className="max-w-80 min-w-80 text-wrap whitespace-normal">
-                  {commendation.award_name}
+                  {commendation.awardName}
                 </TableCell>
                 <TableCell className="max-w-80 min-w-80 text-wrap whitespace-normal">
                   {commendation.content}
                 </TableCell>
                 <TableCell className="text-center">
-                  {commendation.academic_year}
+                  {commendation.academicYear}
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-center">
-                    {commendation.is_highest_level && <Check />}
+                    {commendation.isHighestLevel && <Check />}
                   </div>
                 </TableCell>
               </TableRow>
