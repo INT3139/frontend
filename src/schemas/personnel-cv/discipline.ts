@@ -1,13 +1,13 @@
 import type { ApprovalStatus } from './approval';
 
 export const DISCIPLINE_RECORD = {
-  APPROVAL_STATUS: 'approval_status',
-  DISCIPLINE_SCOPE: 'discipline_scope',
-  DECISION_NUMBER: 'decision_number',
-  DECISION_DATE: 'decision_date',
-  DISCIPLINE_NAME: 'discipline_name',
-  IS_HIGHEST_LEVEL: 'is_highest_level',
-  ATTACHMENT_URL: 'attachment_url',
+  APPROVAL_STATUS: 'approvalStatus',
+  DISCIPLINE_SCOPE: 'disciplineScope',
+  DECISION_NUMBER: 'decisionNumber',
+  DECISION_DATE: 'decisionDate',
+  DISCIPLINE_NAME: 'disciplineName',
+  IS_HIGHEST_LEVEL: 'isHighestLevel',
+  ATTACHMENT_URL: 'attachmentUrl',
 } as const;
 
 export const DISCIPLINE_RECORD_MAP = {

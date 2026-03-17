@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Empty,
@@ -16,15 +15,12 @@ import {
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 import {
-  APPROVAL_STATUS,
-  APPROVAL_STATUS_MAP,
-} from '@/schemas/personnel-cv/approval';
-import {
   DISCIPLINE_RECORD_MAP,
   type DisciplineRecord,
 } from '@/schemas/personnel-cv/discipline';
 import { Check, CircleOff, PencilLine, Play, PlusCircle } from 'lucide-react';
 import { useState } from 'react';
+import { ApprovalStatusBadge } from '../ApprovalStatusBadge';
 import { CustomTablePagination } from '../CustomTablePagination';
 import { HeaderWrapper } from '../HeaderWrapper';
 
@@ -49,13 +45,13 @@ export function DisciplinesTable({ data }: { data: DisciplineRecord[] }) {
 
   return (
     <div>
-      <HeaderWrapper title="Danh hiệu thi đua">
+      <HeaderWrapper title="Kỷ luật">
         <Button>
           <PlusCircle className="h-4 w-4" /> Thêm mới
         </Button>
       </HeaderWrapper>
 
-      <div className="flex flex-col gap-8 border border-t-0 border-gray-400 p-2">
+      <div className="flex flex-col gap-8 border border-t-0 p-2">
         <Table>
           <TableHeader>
             <TableRow>
@@ -101,35 +97,21 @@ export function DisciplinesTable({ data }: { data: DisciplineRecord[] }) {
                 <TableCell className="text-center">{index + 1}</TableCell>
                 <TableCell>
                   <div className="flex justify-center">
-                    <Badge
-                      className={cn('px-3', {
-                        'bg-green-200 text-green-700':
-                          discipline.approval_status ===
-                          APPROVAL_STATUS.APPROVED,
-                        'bg-yellow-200 text-yellow-700':
-                          discipline.approval_status ===
-                          APPROVAL_STATUS.PENDING,
-                        'bg-red-200 text-red-700':
-                          discipline.approval_status ===
-                          APPROVAL_STATUS.REJECTED,
-                      })}
-                    >
-                      {APPROVAL_STATUS_MAP[discipline.approval_status]}
-                    </Badge>
+                    <ApprovalStatusBadge status={discipline.approvalStatus} />
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">
-                  {discipline.decision_number}
+                  {discipline.decisionNumber}
                 </TableCell>
                 <TableCell className="text-center">
-                  {discipline.decision_date}
+                  {discipline.decisionDate}
                 </TableCell>
                 <TableCell className="max-w-72 min-w-72 text-wrap whitespace-normal">
-                  {discipline.discipline_name}
+                  {discipline.disciplineName}
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-center">
-                    {discipline.is_highest_level && <Check />}
+                    {discipline.isHighestLevel && <Check />}
                   </div>
                 </TableCell>
               </TableRow>

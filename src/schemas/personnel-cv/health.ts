@@ -1,8 +1,8 @@
 export const HEALTH_RECORD = {
-  HEALTH_STATUS: 'health_status',
+  HEALTH_STATUS: 'healthStatus',
   HEIGHT: 'height',
   WEIGHT: 'weight',
-  BLOOD_TYPE: 'blood_type',
+  BLOOD_TYPE: 'bloodType',
   NOTES: 'notes',
 } as const;
 

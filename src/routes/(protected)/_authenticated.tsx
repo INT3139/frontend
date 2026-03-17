@@ -2,14 +2,24 @@ import { AppSidebar } from '@/components/main/AppSidebar';
 import { MainHeader } from '@/components/main/MainHeader';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { profileQueryOptions } from '@/hooks/use-profile';
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/(protected)/_authenticated')({
-  /* TODO: authenticate user here! */
-  beforeLoad: async () => {
-    const isLoggedIn = true;
-    if (!isLoggedIn) {
+  beforeLoad: async ({ context: { queryClient } }) => {
+    if (!localStorage.getItem('access_token')) {
       throw redirect({ to: '/login', replace: true });
+    }
+
+    try {
+      const profile = await queryClient.ensureQueryData(profileQueryOptions);
+      return profile;
+    } catch (err) {
+      if (import.meta.env.DEV) console.error(err);
+      else {
+        localStorage.removeItem('access_token');
+        throw redirect({ to: '/login', replace: true });
+      }
     }
   },
   component: RouteComponent,
