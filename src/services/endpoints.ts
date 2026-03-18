@@ -3,7 +3,7 @@ const auth = {
 };
 
 const profile = {
-  me: '/profile/me',
+  me: '/profiles/me',
 };
 
 const reward = {
