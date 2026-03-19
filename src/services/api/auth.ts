@@ -31,7 +31,5 @@ export const login = async (
     })
     .json<LoginResponseBody>();
 
-  console.log('Login response: ', response);
-
   return response;
 };
