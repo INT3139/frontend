@@ -3,8 +3,11 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { type OtherInfo } from '@/schemas/personnel-cv/other';
+import { services } from '@/services/api';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { ChevronDown, Download, Edit, Save, X } from 'lucide-react';
+import { ChevronDown, Download, Edit, Loader2, Save, X } from 'lucide-react';
 import React, { useState } from 'react';
 
 export const Route = createFileRoute(
@@ -24,7 +27,7 @@ function InfoRow({
   name,
 }: {
   label: string;
-  value: string;
+  value?: string | null;
   isEditing?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name?: string;
@@ -40,7 +43,7 @@ function InfoRow({
           <input
             type="text"
             name={name}
-            value={value}
+            value={value || ''}
             onChange={onChange}
             className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-[#008a70] focus:outline-none"
           />
@@ -53,8 +56,22 @@ function InfoRow({
 }
 
 function OtherInformationScreen() {
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['other'],
+    queryFn: services.getOtherInfo,
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: services.updateOtherInfo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['other'] });
+    },
+  });
+
   const [isEditing, setIsEditing] = useState(false);
-  const [otherInfo, setOtherInfo] = useState({
+  const [otherInfo, setOtherInfo] = useState<OtherInfo>({
     khaiRoTienAn: '',
     lamViecCheDoCu: '',
     quanHeToChucNuocNgoai: '',
@@ -66,16 +83,33 @@ function OtherInformationScreen() {
     tongDienTich: '',
     datTuMua: '',
   });
+  const [prevData, setPrevData] = useState(data);
+
+  if (data !== prevData) {
+    setPrevData(data);
+    if (data) setOtherInfo(data);
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setOtherInfo((prev) => ({ ...prev, [name]: value }));
+    setOtherInfo((prev) => ({ ...prev, [name as keyof OtherInfo]: value }));
   };
 
   const handleSave = () => {
-    console.log('Dữ liệu Thông tin khác:', otherInfo);
+    updateMutation.mutate(otherInfo);
     setIsEditing(false);
   };
+
+  if (isLoading)
+    return (
+      <div className="flex flex-1 items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-[#008a70]" />
+      </div>
+    );
+  if (error) {
+    if (import.meta.env.DEV) console.error(error);
+    return <div className="p-4 text-red-500">Đã xảy ra lỗi tải dữ liệu!</div>;
+  }
 
   return (
     <div className="flex min-h-screen justify-center font-sans">

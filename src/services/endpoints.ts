@@ -13,8 +13,18 @@ const reward = {
   discipline: '/reward/discipline',
 };
 
+const family = {
+  me: '/personnel-cv/family/me',
+};
+
+const other = {
+  me: '/personnel-cv/other/me',
+};
+
 export const ENDPOINTS = {
   auth,
   profile,
   reward,
+  family,
+  other,
 } as const;

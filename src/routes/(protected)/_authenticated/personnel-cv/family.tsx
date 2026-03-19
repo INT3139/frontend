@@ -5,8 +5,11 @@ import {
   APPROVAL_STATUS,
   type ApprovalStatus,
 } from '@/schemas/personnel-cv/approval';
+import { type FamilyRecord } from '@/schemas/personnel-cv/family';
+import { services } from '@/services/api';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Check, Edit, Plus, Trash2 } from 'lucide-react';
+import { Check, Edit, Loader2, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 export const Route = createFileRoute(
@@ -15,15 +18,11 @@ export const Route = createFileRoute(
   component: FamilyScreen,
 });
 
-type FamilyRecord = {
-  id: number;
-  quanHe: string;
-  hoTen: string;
-  namSinh: string;
-  queQuan: string;
-  ngheNghiep: string;
-  trangThai: ApprovalStatus;
+// Sử dụng FamilyRecord từ src/schemas/personnel-cv/family.ts
+// Nên ta ẩn type nội bộ này. type ApprovalStatus vẫn lấy từ file gốc.
+type LocalFamilyRecord = FamilyRecord & {
   isEditing?: boolean;
+  trangThai: ApprovalStatus | string;
 };
 
 function FamilyRow({
@@ -34,34 +33,36 @@ function FamilyRow({
   onDelete,
   onChange,
 }: {
-  item: FamilyRecord;
+  item: LocalFamilyRecord;
   index: number;
   onEdit: (id: number) => void;
   onSave: (id: number) => void;
   onDelete: (id: number) => void;
-  onChange: (id: number, field: keyof FamilyRecord, value: string) => void;
+  onChange: (id: number, field: keyof LocalFamilyRecord, value: string) => void;
 }) {
+  const id = item.id as number;
+
   return (
     <tr className="border-b text-sm transition-colors hover:bg-gray-50 [&>td]:py-2">
       <td className="w-24 border-r p-2 text-center">
         <div className="flex items-center justify-center gap-2">
           {item.isEditing ? (
             <button
-              onClick={() => onSave(item.id)}
+              onClick={() => onSave(id)}
               className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-green-100 text-green-600 transition-colors hover:bg-green-200"
             >
               <Check className="h-4 w-4" />
             </button>
           ) : (
             <button
-              onClick={() => onEdit(item.id)}
+              onClick={() => onEdit(id)}
               className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-blue-100 text-blue-600 transition-colors hover:bg-blue-200"
             >
               <Edit className="h-3.5 w-3.5" />
             </button>
           )}
           <button
-            onClick={() => onDelete(item.id)}
+            onClick={() => onDelete(id)}
             className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-red-100 text-red-600 transition-colors hover:bg-red-200"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -74,7 +75,7 @@ function FamilyRow({
           <input
             className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
             value={item.quanHe}
-            onChange={(e) => onChange(item.id, 'quanHe', e.target.value)}
+            onChange={(e) => onChange(id, 'quanHe', e.target.value)}
             placeholder="VD: Cha đẻ"
           />
         ) : (
@@ -86,7 +87,7 @@ function FamilyRow({
           <input
             className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
             value={item.hoTen}
-            onChange={(e) => onChange(item.id, 'hoTen', e.target.value)}
+            onChange={(e) => onChange(id, 'hoTen', e.target.value)}
           />
         ) : (
           item.hoTen
@@ -97,7 +98,7 @@ function FamilyRow({
           <input
             className="w-full border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
             value={item.namSinh}
-            onChange={(e) => onChange(item.id, 'namSinh', e.target.value)}
+            onChange={(e) => onChange(id, 'namSinh', e.target.value)}
           />
         ) : (
           item.namSinh
@@ -108,7 +109,7 @@ function FamilyRow({
           <input
             className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
             value={item.queQuan}
-            onChange={(e) => onChange(item.id, 'queQuan', e.target.value)}
+            onChange={(e) => onChange(id, 'queQuan', e.target.value)}
           />
         ) : (
           item.queQuan
@@ -119,7 +120,7 @@ function FamilyRow({
           <input
             className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
             value={item.ngheNghiep}
-            onChange={(e) => onChange(item.id, 'ngheNghiep', e.target.value)}
+            onChange={(e) => onChange(id, 'ngheNghiep', e.target.value)}
           />
         ) : (
           item.ngheNghiep
@@ -132,7 +133,7 @@ function FamilyRow({
               className="rounded border border-gray-300 p-1 text-xs outline-none focus:border-[#008a70]"
               value={item.trangThai}
               onChange={(e) =>
-                onChange(item.id, 'trangThai', e.target.value as ApprovalStatus)
+                onChange(id, 'trangThai', e.target.value as ApprovalStatus)
               }
             >
               <option value={APPROVAL_STATUS.APPROVED}>Đã duyệt</option>
@@ -149,55 +150,35 @@ function FamilyRow({
 }
 
 function FamilyScreen() {
-  const [myFamily, setMyFamily] = useState<FamilyRecord[]>([
-    {
-      id: 1,
-      quanHe: 'Bố đẻ',
-      hoTen: 'Nguyễn Bố',
-      namSinh: '1963',
-      queQuan: 'Hà Nội',
-      ngheNghiep: 'Công nhân',
-      trangThai: APPROVAL_STATUS.APPROVED,
-      isEditing: false,
-    },
-    {
-      id: 2,
-      quanHe: 'Mẹ đẻ',
-      hoTen: 'Nguyễn Thị M',
-      namSinh: '1966',
-      queQuan: 'Hà Nội',
-      ngheNghiep: 'Công nhân',
-      trangThai: APPROVAL_STATUS.APPROVED,
-      isEditing: false,
-    },
-  ]);
+  const queryClient = useQueryClient();
 
-  const [inLawFamily, setInLawFamily] = useState<FamilyRecord[]>([
-    {
-      id: 1,
-      quanHe: 'Bố vợ',
-      hoTen: 'Nguyễn Bố Vợ',
-      namSinh: '1960',
-      queQuan: 'Hà Nội',
-      ngheNghiep: 'Nông dân',
-      trangThai: APPROVAL_STATUS.APPROVED,
-      isEditing: false,
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['family'],
+    queryFn: services.getFamilyInfo,
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: services.updateFamilyInfo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['family'] });
     },
-    {
-      id: 2,
-      quanHe: 'Mẹ vợ',
-      hoTen: 'Nguyễn Mẹ Vợ',
-      namSinh: '1965',
-      queQuan: 'Hà Nội',
-      ngheNghiep: 'Nông dân',
-      trangThai: APPROVAL_STATUS.PENDING,
-      isEditing: false,
-    },
-  ]);
+  });
+
+  const [myFamily, setMyFamily] = useState<LocalFamilyRecord[]>([]);
+  const [inLawFamily, setInLawFamily] = useState<LocalFamilyRecord[]>([]);
+  const [prevData, setPrevData] = useState(data);
+
+  if (data !== prevData) {
+    setPrevData(data);
+    if (data) {
+      setMyFamily(data.myFamily as LocalFamilyRecord[]);
+      setInLawFamily(data.inLawFamily as LocalFamilyRecord[]);
+    }
+  }
 
   const PAGE_SIZE = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(myFamily.length / PAGE_SIZE) || 1;
+  const totalPages = Math.ceil(Math.max(myFamily.length, 1) / PAGE_SIZE);
 
   const paginatedData = myFamily.slice(
     (currentPage - 1) * PAGE_SIZE,
@@ -227,17 +208,21 @@ function FamilyScreen() {
         item.id === id ? { ...item, isEditing: true } : item,
       ),
     );
-  const handleSaveMyFamily = (id: number) =>
-    setMyFamily(
-      myFamily.map((item) =>
-        item.id === id ? { ...item, isEditing: false } : item,
-      ),
+  const handleSaveMyFamily = (id: number) => {
+    const newMyFamily = myFamily.map((item) =>
+      item.id === id ? { ...item, isEditing: false } : item,
     );
-  const handleDeleteMyFamily = (id: number) =>
-    setMyFamily(myFamily.filter((item) => item.id !== id));
+    setMyFamily(newMyFamily);
+    updateMutation.mutate({ myFamily: newMyFamily, inLawFamily });
+  };
+  const handleDeleteMyFamily = (id: number) => {
+    const newMyFamily = myFamily.filter((item) => item.id !== id);
+    setMyFamily(newMyFamily);
+    updateMutation.mutate({ myFamily: newMyFamily, inLawFamily });
+  };
   const handleChangeMyFamily = (
     id: number,
-    field: keyof FamilyRecord,
+    field: keyof LocalFamilyRecord,
     value: string,
   ) =>
     setMyFamily(
@@ -268,17 +253,21 @@ function FamilyScreen() {
         item.id === id ? { ...item, isEditing: true } : item,
       ),
     );
-  const handleSaveInLawFamily = (id: number) =>
-    setInLawFamily(
-      inLawFamily.map((item) =>
-        item.id === id ? { ...item, isEditing: false } : item,
-      ),
+  const handleSaveInLawFamily = (id: number) => {
+    const newInLawFamily = inLawFamily.map((item) =>
+      item.id === id ? { ...item, isEditing: false } : item,
     );
-  const handleDeleteInLawFamily = (id: number) =>
-    setInLawFamily(inLawFamily.filter((item) => item.id !== id));
+    setInLawFamily(newInLawFamily);
+    updateMutation.mutate({ myFamily, inLawFamily: newInLawFamily });
+  };
+  const handleDeleteInLawFamily = (id: number) => {
+    const newInLawFamily = inLawFamily.filter((item) => item.id !== id);
+    setInLawFamily(newInLawFamily);
+    updateMutation.mutate({ myFamily, inLawFamily: newInLawFamily });
+  };
   const handleChangeInLawFamily = (
     id: number,
-    field: keyof FamilyRecord,
+    field: keyof LocalFamilyRecord,
     value: string,
   ) =>
     setInLawFamily(
@@ -286,6 +275,17 @@ function FamilyScreen() {
         item.id === id ? { ...item, [field]: value } : item,
       ),
     );
+
+  if (isLoading)
+    return (
+      <div className="flex flex-1 items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-[#008a70]" />
+      </div>
+    );
+  if (error) {
+    if (import.meta.env.DEV) console.error(error);
+    return <div className="p-4 text-red-500">Đã xảy ra lỗi tải dữ liệu!</div>;
+  }
 
   return (
     <div className="min-h-screen space-y-10 bg-white p-4 font-sans">
