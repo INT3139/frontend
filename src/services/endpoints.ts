@@ -4,6 +4,7 @@ const auth = {
 
 const profile = {
   me: '/profile/me',
+  health: (userId: number | string) => `/profiles/${userId}/health`,
 };
 
 const reward = {
