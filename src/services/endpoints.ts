@@ -3,7 +3,10 @@ const auth = {
 };
 
 const profile = {
-  me: '/profile/me',
+  me: '/profiles/me',
+  education: (id: string) => `/profiles/${id}/education`,
+  educationItem: (id: string, subId: string) =>
+    `/profiles/${id}/education/${subId}`,
 };
 
 const reward = {
@@ -18,7 +21,12 @@ const family = {
 };
 
 const other = {
-  me: '/personnel-cv/other/me',
+  me: '/personnel-cv/other/me', 
+};
+const academicCv = {
+  scholarlyWorks: '/academic-cv/scholarly-works',
+  scientificArticles: '/academic-cv/scientific-articles',
+  scientificReports: '/academic-cv/scientific-reports',
 };
 
 export const ENDPOINTS = {
@@ -27,4 +35,5 @@ export const ENDPOINTS = {
   reward,
   family,
   other,
+  academicCv,
 } as const;

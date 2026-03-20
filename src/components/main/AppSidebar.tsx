@@ -30,6 +30,8 @@ import { Route as academicAwardsRoute } from '@/routes/(protected)/_authenticate
 import { Route as academicOtherRoute } from '@/routes/(protected)/_authenticated/academic-cv/academic-other';
 import { Route as academicProjectsRoute } from '@/routes/(protected)/_authenticated/academic-cv/projects';
 import { Route as academicScholarlyWorksRoute } from '@/routes/(protected)/_authenticated/academic-cv/scholarly-works';
+import { Route as academicScientificArticlesRoute } from '@/routes/(protected)/_authenticated/academic-cv/scientific-articles';
+import { Route as academicScientificReportsRoute } from '@/routes/(protected)/_authenticated/academic-cv/scientific-reports';
 import { Route as personnelCVRoute } from '@/routes/(protected)/_authenticated/personnel-cv';
 import { Link, useLocation } from '@tanstack/react-router';
 import {
@@ -101,12 +103,12 @@ const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
       },
       {
         label: 'Bài báo khoa học',
-        to: '#',
+        to: academicScientificArticlesRoute.to,
       },
 
       {
         label: 'Báo cáo khoa học',
-        to: '#',
+        to: academicScientificReportsRoute.to,
       },
       {
         label: 'Giải thưởng',

@@ -1,10 +1,28 @@
-import { Check, Edit, Plus, Trash2 } from 'lucide-react';
-import React, { useState } from 'react';
+import { HeaderWrapper } from '@/components/main/HeaderWrapper';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Download, Edit, PlusCircle, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
 // ==========================================
 // KHAI BÁO KIỂU DỮ LIỆU
 // ==========================================
-type ContractItemType = {
+export type ContractItemType = {
   id: number;
   soHD: string;
   loaiHD: string;
@@ -15,10 +33,9 @@ type ContractItemType = {
   congViec: string;
   doiTuong: string;
   ngayBHXH: string;
-  isEditing: boolean;
 };
 
-type ExtensionItemType = {
+export type ExtensionItemType = {
   id: number;
   soQD: string;
   ngayKy: string;
@@ -27,282 +44,236 @@ type ExtensionItemType = {
   ngayKetThuc: string;
   donVi: string;
   chucDanh: string;
-  isEditing: boolean;
 };
 
 // ==========================================
-// COMPONENT 1: DÒNG QUÁ TRÌNH KÝ HỢP ĐỒNG
+// COMPONENT FORM: HỢP ĐỒNG
 // ==========================================
-function ContractRow({
-  item,
-  index,
-  onEdit,
-  onSave,
-  onDelete,
-  onChange,
+function ContractForm({
+  initialValues,
+  onSubmit,
+  onCancel,
 }: {
-  item: ContractItemType;
-  index: number;
-  onEdit: (id: number) => void;
-  onSave: (id: number) => void;
-  onDelete: (id: number) => void;
-  onChange: (id: number, field: string, value: string | boolean) => void;
+  initialValues: Partial<ContractItemType>;
+  onSubmit: (data: Partial<ContractItemType>) => void;
+  onCancel: () => void;
 }) {
+  const [formData, setFormData] = useState<Partial<ContractItemType>>({
+    soHD: '',
+    loaiHD: '',
+    ngayHieuLuc: '',
+    ngayHetHan: '',
+    donVi: '',
+    isCurrent: false,
+    congViec: '',
+    doiTuong: '',
+    ngayBHXH: '',
+    ...initialValues,
+  });
+
+  const handleChange = (
+    field: keyof ContractItemType,
+    value: string | boolean,
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
-    <tr className="text-center transition-colors hover:bg-gray-50">
-      <td className="border border-gray-200 p-3">
-        <div className="flex items-center justify-center gap-2">
-          {item.isEditing ? (
-            <button
-              onClick={() => onSave(item.id)}
-              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-green-100 text-green-600 transition-colors hover:bg-green-200"
-            >
-              <Check className="h-4 w-4" />
-            </button>
-          ) : (
-            <button
-              onClick={() => onEdit(item.id)}
-              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-blue-100 text-blue-600 transition-colors hover:bg-blue-200"
-            >
-              <Edit className="h-3.5 w-3.5" />
-            </button>
-          )}
-          <button
-            onClick={() => onDelete(item.id)}
-            className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-red-100 text-red-600 transition-colors hover:bg-red-200"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(formData);
+      }}
+      className="space-y-4 py-4"
+    >
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <Label>Số hợp đồng</Label>
+          <Input
+            value={formData.soHD}
+            onChange={(e) => handleChange('soHD', e.target.value)}
+            placeholder="Nhập số HD..."
+          />
         </div>
-      </td>
-      <td className="border border-gray-200 p-3">{index + 1}</td>
-      <td className="border border-gray-200 p-3 text-left font-medium">
-        {item.isEditing ? (
-          <input
-            className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.soHD}
-            onChange={(e) => onChange(item.id, 'soHD', e.target.value)}
+        <div className="space-y-2">
+          <Label>Loại hợp đồng</Label>
+          <Input
+            value={formData.loaiHD}
+            onChange={(e) => handleChange('loaiHD', e.target.value)}
+            placeholder="Nhập loại HD..."
           />
-        ) : (
-          item.soHD
-        )}
-      </td>
-      <td className="border border-gray-200 p-3 text-left">
-        {item.isEditing ? (
-          <input
-            className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.loaiHD}
-            onChange={(e) => onChange(item.id, 'loaiHD', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <Label>Ngày hiệu lực</Label>
+          <Input
+            value={formData.ngayHieuLuc}
+            onChange={(e) => handleChange('ngayHieuLuc', e.target.value)}
+            placeholder="DD/MM/YYYY"
           />
-        ) : (
-          item.loaiHD
-        )}
-      </td>
-      <td className="border border-gray-200 p-3">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.ngayHieuLuc}
-            onChange={(e) => onChange(item.id, 'ngayHieuLuc', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <Label>Ngày hết hiệu lực</Label>
+          <Input
+            value={formData.ngayHetHan}
+            onChange={(e) => handleChange('ngayHetHan', e.target.value)}
+            placeholder="DD/MM/YYYY"
           />
-        ) : (
-          item.ngayHieuLuc
-        )}
-      </td>
-      <td className="border border-gray-200 p-3">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.ngayHetHan}
-            onChange={(e) => onChange(item.id, 'ngayHetHan', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <Label>Đơn vị tuyển</Label>
+          <Input
+            value={formData.donVi}
+            onChange={(e) => handleChange('donVi', e.target.value)}
+            placeholder="Nhập đơn vị..."
           />
-        ) : (
-          item.ngayHetHan
-        )}
-      </td>
-      <td className="border border-gray-200 p-3 text-left">
-        {item.isEditing ? (
-          <input
-            className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.donVi}
-            onChange={(e) => onChange(item.id, 'donVi', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <Label>Công việc đảm nhận</Label>
+          <Input
+            value={formData.congViec}
+            onChange={(e) => handleChange('congViec', e.target.value)}
+            placeholder="Nhập công việc..."
           />
-        ) : (
-          item.donVi
-        )}
-      </td>
-      <td className="border border-gray-200 p-3">
-        <input
-          type="checkbox"
-          checked={item.isCurrent}
-          onChange={(e) => onChange(item.id, 'isCurrent', e.target.checked)}
-          disabled={!item.isEditing}
-          className="h-4 w-4 cursor-pointer accent-[#008a70] disabled:cursor-default"
-        />
-      </td>
-      <td className="border border-gray-200 p-3 text-left">
-        {item.isEditing ? (
-          <input
-            className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.congViec}
-            onChange={(e) => onChange(item.id, 'congViec', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <Label>Đối tượng</Label>
+          <Input
+            value={formData.doiTuong}
+            onChange={(e) => handleChange('doiTuong', e.target.value)}
+            placeholder="Nhập đối tượng..."
           />
-        ) : (
-          item.congViec
-        )}
-      </td>
-      <td className="border border-gray-200 p-3 text-left">
-        {item.isEditing ? (
-          <input
-            className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.doiTuong}
-            onChange={(e) => onChange(item.id, 'doiTuong', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <Label>Ngày đóng BHXH</Label>
+          <Input
+            value={formData.ngayBHXH}
+            onChange={(e) => handleChange('ngayBHXH', e.target.value)}
+            placeholder="DD/MM/YYYY"
           />
-        ) : (
-          item.doiTuong
-        )}
-      </td>
-      <td className="border border-gray-200 p-3">
-        {item.isEditing ? (
+        </div>
+        <div className="mt-2 flex items-center space-x-2 md:col-span-2">
           <input
-            className="w-24 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.ngayBHXH}
-            onChange={(e) => onChange(item.id, 'ngayBHXH', e.target.value)}
+            type="checkbox"
+            id="isCurrent"
+            checked={formData.isCurrent}
+            onChange={(e) => handleChange('isCurrent', e.target.checked)}
+            className="h-4 w-4 cursor-pointer rounded border-gray-300 accent-[#008a70]"
           />
-        ) : (
-          item.ngayBHXH
-        )}
-      </td>
-    </tr>
+          <Label htmlFor="isCurrent" className="cursor-pointer">
+            Là hợp đồng hiện tại
+          </Label>
+        </div>
+      </div>
+      <div className="flex justify-end gap-2 border-t pt-4">
+        <Button type="button" variant="secondary" onClick={onCancel}>
+          Hủy
+        </Button>
+        <Button type="submit">Xác nhận</Button>
+      </div>
+    </form>
   );
 }
 
 // ==========================================
-// COMPONENT 2: DÒNG QUÁ TRÌNH KÉO DÀI
+// COMPONENT FORM: KÉO DÀI THỜI GIAN
 // ==========================================
-function ExtensionRow({
-  item,
-  index,
-  onEdit,
-  onSave,
-  onDelete,
-  onChange,
+function ExtensionForm({
+  initialValues,
+  onSubmit,
+  onCancel,
 }: {
-  item: ExtensionItemType;
-  index: number;
-  onEdit: (id: number) => void;
-  onSave: (id: number) => void;
-  onDelete: (id: number) => void;
-  onChange: (id: number, field: string, value: string) => void;
+  initialValues: Partial<ExtensionItemType>;
+  onSubmit: (data: Partial<ExtensionItemType>) => void;
+  onCancel: () => void;
 }) {
+  const [formData, setFormData] = useState<Partial<ExtensionItemType>>({
+    soQD: '',
+    ngayKy: '',
+    thoiGianKeoDai: '',
+    ngayBatDau: '',
+    ngayKetThuc: '',
+    donVi: '',
+    chucDanh: '',
+    ...initialValues,
+  });
+
+  const handleChange = (field: keyof ExtensionItemType, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
-    <tr className="text-center transition-colors hover:bg-gray-50">
-      <td className="border border-gray-200 p-3">
-        <div className="flex items-center justify-center gap-2">
-          {item.isEditing ? (
-            <button
-              onClick={() => onSave(item.id)}
-              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-green-100 text-green-600 transition-colors hover:bg-green-200"
-            >
-              <Check className="h-4 w-4" />
-            </button>
-          ) : (
-            <button
-              onClick={() => onEdit(item.id)}
-              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-blue-100 text-blue-600 transition-colors hover:bg-blue-200"
-            >
-              <Edit className="h-3.5 w-3.5" />
-            </button>
-          )}
-          <button
-            onClick={() => onDelete(item.id)}
-            className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-red-100 text-red-600 transition-colors hover:bg-red-200"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(formData);
+      }}
+      className="space-y-4 py-4"
+    >
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <Label>Số quyết định</Label>
+          <Input
+            value={formData.soQD}
+            onChange={(e) => handleChange('soQD', e.target.value)}
+            placeholder="Nhập số QĐ..."
+          />
         </div>
-      </td>
-      <td className="border border-gray-200 p-3">{index + 1}</td>
-      <td className="border border-gray-200 p-3 text-left font-medium">
-        {item.isEditing ? (
-          <input
-            className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.soQD}
-            onChange={(e) => onChange(item.id, 'soQD', e.target.value)}
+        <div className="space-y-2">
+          <Label>Ngày ký</Label>
+          <Input
+            value={formData.ngayKy}
+            onChange={(e) => handleChange('ngayKy', e.target.value)}
+            placeholder="DD/MM/YYYY"
           />
-        ) : (
-          item.soQD
-        )}
-      </td>
-      <td className="border border-gray-200 p-3">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.ngayKy}
-            onChange={(e) => onChange(item.id, 'ngayKy', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <Label>Thời gian kéo dài</Label>
+          <Input
+            value={formData.thoiGianKeoDai}
+            onChange={(e) => handleChange('thoiGianKeoDai', e.target.value)}
+            placeholder="Nhập thời gian..."
           />
-        ) : (
-          item.ngayKy
-        )}
-      </td>
-      <td className="border border-gray-200 p-3">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.thoiGianKeoDai}
-            onChange={(e) =>
-              onChange(item.id, 'thoiGianKeoDai', e.target.value)
-            }
+        </div>
+        <div className="space-y-2">
+          <Label>Ngày bắt đầu</Label>
+          <Input
+            value={formData.ngayBatDau}
+            onChange={(e) => handleChange('ngayBatDau', e.target.value)}
+            placeholder="DD/MM/YYYY"
           />
-        ) : (
-          item.thoiGianKeoDai
-        )}
-      </td>
-      <td className="border border-gray-200 p-3">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.ngayBatDau}
-            onChange={(e) => onChange(item.id, 'ngayBatDau', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <Label>Ngày kết thúc</Label>
+          <Input
+            value={formData.ngayKetThuc}
+            onChange={(e) => handleChange('ngayKetThuc', e.target.value)}
+            placeholder="DD/MM/YYYY"
           />
-        ) : (
-          item.ngayBatDau
-        )}
-      </td>
-      <td className="border border-gray-200 p-3">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.ngayKetThuc}
-            onChange={(e) => onChange(item.id, 'ngayKetThuc', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <Label>Đơn vị sử dụng</Label>
+          <Input
+            value={formData.donVi}
+            onChange={(e) => handleChange('donVi', e.target.value)}
+            placeholder="Nhập đơn vị..."
           />
-        ) : (
-          item.ngayKetThuc
-        )}
-      </td>
-      <td className="border border-gray-200 p-3 text-left">
-        {item.isEditing ? (
-          <input
-            className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.donVi}
-            onChange={(e) => onChange(item.id, 'donVi', e.target.value)}
+        </div>
+        <div className="space-y-2 md:col-span-2">
+          <Label>Chức danh (chức vụ)</Label>
+          <Input
+            value={formData.chucDanh}
+            onChange={(e) => handleChange('chucDanh', e.target.value)}
+            placeholder="Nhập chức danh..."
           />
-        ) : (
-          item.donVi
-        )}
-      </td>
-      <td className="border border-gray-200 p-3 text-left">
-        {item.isEditing ? (
-          <input
-            className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.chucDanh}
-            onChange={(e) => onChange(item.id, 'chucDanh', e.target.value)}
-          />
-        ) : (
-          item.chucDanh
-        )}
-      </td>
-    </tr>
+        </div>
+      </div>
+      <div className="flex justify-end gap-2 border-t pt-4">
+        <Button type="button" variant="secondary" onClick={onCancel}>
+          Hủy
+        </Button>
+        <Button type="submit">Xác nhận</Button>
+      </div>
+    </form>
   );
 }
 
@@ -310,7 +281,7 @@ function ExtensionRow({
 // MAIN COMPONENT
 // ==========================================
 export default function ContractHistory() {
-  // STATE: Danh sách hợp đồng
+  // STATE: Dữ liệu
   const [contracts, setContracts] = useState<ContractItemType[]>([
     {
       id: 1,
@@ -323,271 +294,344 @@ export default function ContractHistory() {
       congViec: '',
       doiTuong: '',
       ngayBHXH: '',
-      isEditing: false,
     },
   ]);
-
-  // STATE: Danh sách kéo dài thời gian
   const [extensions, setExtensions] = useState<ExtensionItemType[]>([]);
 
+  // STATE: Quản lý Dialog Hợp đồng
+  const [isContractDialogOpen, setIsContractDialogOpen] = useState(false);
+  const [editingContract, setEditingContract] =
+    useState<ContractItemType | null>(null);
+
+  // STATE: Quản lý Dialog Kéo dài thời gian
+  const [isExtensionDialogOpen, setIsExtensionDialogOpen] = useState(false);
+  const [editingExtension, setEditingExtension] =
+    useState<ExtensionItemType | null>(null);
+
   // HANDLERS: Hợp đồng
-  const handleAddContract = () => {
-    setContracts([
-      {
-        id: Date.now(),
-        soHD: '',
-        loaiHD: '',
-        ngayHieuLuc: '',
-        ngayHetHan: '',
-        donVi: '',
-        isCurrent: false,
-        congViec: '',
-        doiTuong: '',
-        ngayBHXH: '',
-        isEditing: true,
-      },
-      ...contracts,
-    ]);
+  const handleOpenContractForm = (contract: ContractItemType | null = null) => {
+    setEditingContract(contract);
+    setIsContractDialogOpen(true);
   };
 
-  const handleEditContract = (id: number) =>
-    setContracts(
-      contracts.map((item) =>
-        item.id === id ? { ...item, isEditing: true } : item,
-      ),
-    );
+  const handleSubmitContract = (data: Partial<ContractItemType>) => {
+    if (editingContract) {
+      setContracts(
+        contracts.map((item) =>
+          item.id === editingContract.id
+            ? ({ ...item, ...data } as ContractItemType)
+            : item,
+        ),
+      );
+    } else {
+      setContracts([
+        { ...data, id: Date.now() } as ContractItemType,
+        ...contracts,
+      ]);
+    }
+    setIsContractDialogOpen(false);
+  };
 
-  const handleSaveContract = (id: number) =>
-    setContracts(
-      contracts.map((item) =>
-        item.id === id ? { ...item, isEditing: false } : item,
-      ),
-    );
-
-  const handleDeleteContract = (id: number) =>
-    setContracts(contracts.filter((item) => item.id !== id));
-
-  const handleChangeContract = (
-    id: number,
-    field: string,
-    value: string | boolean,
-  ) =>
-    setContracts(
-      contracts.map((item) =>
-        item.id === id ? { ...item, [field]: value } : item,
-      ),
-    );
+  const handleDeleteContract = (id: number) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa bản ghi này?')) {
+      setContracts(contracts.filter((item) => item.id !== id));
+    }
+  };
 
   // HANDLERS: Kéo dài thời gian
-  const handleAddExtension = () => {
-    setExtensions([
-      {
-        id: Date.now(),
-        soQD: '',
-        ngayKy: '',
-        thoiGianKeoDai: '',
-        ngayBatDau: '',
-        ngayKetThuc: '',
-        donVi: '',
-        chucDanh: '',
-        isEditing: true,
-      },
-      ...extensions,
-    ]);
+  const handleOpenExtensionForm = (
+    extension: ExtensionItemType | null = null,
+  ) => {
+    setEditingExtension(extension);
+    setIsExtensionDialogOpen(true);
   };
 
-  const handleEditExtension = (id: number) =>
-    setExtensions(
-      extensions.map((item) =>
-        item.id === id ? { ...item, isEditing: true } : item,
-      ),
-    );
+  const handleSubmitExtension = (data: Partial<ExtensionItemType>) => {
+    if (editingExtension) {
+      setExtensions(
+        extensions.map((item) =>
+          item.id === editingExtension.id
+            ? ({ ...item, ...data } as ExtensionItemType)
+            : item,
+        ),
+      );
+    } else {
+      setExtensions([
+        { ...data, id: Date.now() } as ExtensionItemType,
+        ...extensions,
+      ]);
+    }
+    setIsExtensionDialogOpen(false);
+  };
 
-  const handleSaveExtension = (id: number) =>
-    setExtensions(
-      extensions.map((item) =>
-        item.id === id ? { ...item, isEditing: false } : item,
-      ),
-    );
-
-  const handleDeleteExtension = (id: number) =>
-    setExtensions(extensions.filter((item) => item.id !== id));
-
-  const handleChangeExtension = (id: number, field: string, value: string) =>
-    setExtensions(
-      extensions.map((item) =>
-        item.id === id ? { ...item, [field]: value } : item,
-      ),
-    );
+  const handleDeleteExtension = (id: number) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa bản ghi này?')) {
+      setExtensions(extensions.filter((item) => item.id !== id));
+    }
+  };
 
   return (
-    <div className="flex min-h-screen justify-center font-sans">
-      <div className="flex w-full flex-col border border-gray-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-gray-200 bg-[#f0f9f6] p-3">
-          <h1 className="ml-2 text-base font-bold text-[#008a70] uppercase md:text-lg">
-            Quá trình ký hợp đồng
-          </h1>
+    <div className="flex flex-col">
+      <HeaderWrapper title="Quá trình ký hợp đồng & Kéo dài chuyên môn">
+        <div className="flex gap-2">
+          <Button variant="outline">
+            <Download className="mr-2 h-4 w-4" /> Xuất lý lịch
+          </Button>
         </div>
-        <div className="flex-1 p-6 md:p-8">
-          {/* BẢNG 1: QUÁ TRÌNH KÝ HỢP ĐỒNG */}
-          <div>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-[#008a70] uppercase">
-                Quá trình ký hợp đồng
-              </h3>
-              <button
-                onClick={handleAddContract}
-                className="flex items-center gap-2 rounded bg-[#f5b027] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-yellow-500"
-              >
-                <Plus className="h-4 w-4" />
-                Thêm mới
-              </button>
-            </div>
+      </HeaderWrapper>
 
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-max border-collapse text-left text-sm">
-                <thead className="bg-[#f8fafc] text-center text-gray-800">
-                  <tr>
-                    <th className="w-20 border border-gray-200 px-4 py-3 font-semibold">
-                      Thao tác
-                    </th>
-                    <th className="w-16 border border-gray-200 px-4 py-3 font-semibold">
-                      STT
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-left font-semibold">
-                      Số hợp đồng
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-left font-semibold">
-                      Loại hợp đồng
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      Ngày hiệu lực
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      Ngày hết hiệu lực
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-left font-semibold">
-                      Đơn vị tuyển
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      HĐ hiện tại
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-left font-semibold">
-                      Công việc đảm nhận
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-left font-semibold">
-                      Đối tượng
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      Ngày đóng BHXH
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {contracts.map((item, index) => (
-                    <ContractRow
-                      key={item.id}
-                      item={item}
-                      index={index}
-                      onEdit={handleEditContract}
-                      onSave={handleSaveContract}
-                      onDelete={handleDeleteContract}
-                      onChange={handleChangeContract}
-                    />
-                  ))}
-                  {contracts.length === 0 && (
-                    <tr>
-                      <td
-                        colSpan={11}
-                        className="p-4 text-center text-gray-500"
-                      >
-                        Chưa có dữ liệu hợp đồng.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+      <div className="space-y-8 px-4 py-6">
+        {/* BẢNG 1: QUÁ TRÌNH KÝ HỢP ĐỒNG */}
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-bold text-gray-800">
+              I. Quá trình ký hợp đồng
+            </h3>
+            <Button onClick={() => handleOpenContractForm(null)}>
+              <PlusCircle className="mr-2 h-4 w-4" /> Thêm mới
+            </Button>
           </div>
 
-          <div className="my-8 border-t border-gray-300"></div>
+          <div className="overflow-hidden rounded-md border text-sm">
+            <Table>
+              <TableHeader className="bg-slate-50">
+                <TableRow>
+                  <TableHead className="w-24 text-center font-semibold text-gray-800">
+                    Thao tác
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Số hợp đồng
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-800">
+                    Loại hợp đồng
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Ngày hiệu lực
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Ngày hết hạn
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-800">
+                    Đơn vị tuyển
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    HĐ hiện tại
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-800">
+                    Công việc
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-800">
+                    Đối tượng
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Đóng BHXH
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {contracts.length > 0 ? (
+                  contracts.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="text-center">
+                        <div className="flex justify-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 px-0 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                            onClick={() => handleOpenContractForm(item)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 px-0 text-red-600 hover:bg-red-50 hover:text-red-700"
+                            onClick={() => handleDeleteContract(item.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center font-medium">
+                        {item.soHD || '---'}
+                      </TableCell>
+                      <TableCell>{item.loaiHD || '---'}</TableCell>
+                      <TableCell className="text-center">
+                        {item.ngayHieuLuc || '---'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.ngayHetHan || '---'}
+                      </TableCell>
+                      <TableCell>{item.donVi || '---'}</TableCell>
+                      <TableCell className="text-center">
+                        {item.isCurrent ? (
+                          <span className="font-medium text-blue-600">
+                            Đang hiệu lực
+                          </span>
+                        ) : (
+                          '---'
+                        )}
+                      </TableCell>
+                      <TableCell>{item.congViec || '---'}</TableCell>
+                      <TableCell>{item.doiTuong || '---'}</TableCell>
+                      <TableCell className="text-center">
+                        {item.ngayBHXH || '---'}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={10}
+                      className="h-32 text-center text-gray-500"
+                    >
+                      Không có dữ liệu
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
 
-          {/* BẢNG 2: KÉO DÀI THỜI GIAN */}
-          <div>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-[#008a70] uppercase">
-                Quá trình kéo dài thời gian làm công tác chuyên môn
-              </h3>
-              <button
-                onClick={handleAddExtension}
-                className="flex items-center gap-2 rounded bg-[#f5b027] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-yellow-500"
-              >
-                <Plus className="h-4 w-4" />
-                Thêm mới
-              </button>
-            </div>
+        {/* BẢNG 2: KÉO DÀI THỜI GIAN */}
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-bold text-gray-800">
+              II. Quá trình kéo dài thời gian làm công tác chuyên môn
+            </h3>
+            <Button onClick={() => handleOpenExtensionForm(null)}>
+              <PlusCircle className="mr-2 h-4 w-4" /> Thêm mới
+            </Button>
+          </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-max border-collapse text-left text-sm">
-                <thead className="bg-[#f8fafc] text-center text-gray-800">
-                  <tr>
-                    <th className="w-20 border border-gray-200 px-4 py-3 font-semibold">
-                      Thao tác
-                    </th>
-                    <th className="w-16 border border-gray-200 px-4 py-3 font-semibold">
-                      STT
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-left font-semibold">
-                      Số quyết định
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      Ngày ký
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      Thời gian kéo dài
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      Ngày bắt đầu
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      Ngày kết thúc
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-left font-semibold">
-                      Đơn vị sử dụng
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-left font-semibold">
-                      Chức danh (chức vụ)
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {extensions.map((item, index) => (
-                    <ExtensionRow
-                      key={item.id}
-                      item={item}
-                      index={index}
-                      onEdit={handleEditExtension}
-                      onSave={handleSaveExtension}
-                      onDelete={handleDeleteExtension}
-                      onChange={handleChangeExtension}
-                    />
-                  ))}
-                  {extensions.length === 0 && (
-                    <tr>
-                      <td
-                        colSpan={9}
-                        className="border border-gray-200 py-8 text-center text-gray-500 italic"
-                      >
-                        Không có dữ liệu
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+          <div className="overflow-hidden rounded-md border text-sm">
+            <Table>
+              <TableHeader className="bg-slate-50">
+                <TableRow>
+                  <TableHead className="w-24 text-center font-semibold text-gray-800">
+                    Thao tác
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-800">
+                    Số quyết định
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Ngày ký
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    T/G kéo dài
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Ngày bắt đầu
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Ngày kết thúc
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-800">
+                    Đơn vị sử dụng
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-800">
+                    Chức danh
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {extensions.length > 0 ? (
+                  extensions.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="text-center">
+                        <div className="flex justify-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 px-0 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                            onClick={() => handleOpenExtensionForm(item)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 px-0 text-red-600 hover:bg-red-50 hover:text-red-700"
+                            onClick={() => handleDeleteExtension(item.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {item.soQD || '---'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.ngayKy || '---'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.thoiGianKeoDai || '---'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.ngayBatDau || '---'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.ngayKetThuc || '---'}
+                      </TableCell>
+                      <TableCell>{item.donVi || '---'}</TableCell>
+                      <TableCell>{item.chucDanh || '---'}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={8}
+                      className="h-32 text-center text-gray-500"
+                    >
+                      Không có dữ liệu
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </div>
         </div>
       </div>
+
+      {/* DIALOG: FORM HỢP ĐỒNG */}
+      <Dialog
+        open={isContractDialogOpen}
+        onOpenChange={setIsContractDialogOpen}
+      >
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">
+              {editingContract ? 'Cập nhật' : 'Thêm mới'} thông tin hợp đồng
+            </DialogTitle>
+          </DialogHeader>
+          <ContractForm
+            initialValues={editingContract || {}}
+            onSubmit={handleSubmitContract}
+            onCancel={() => setIsContractDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* DIALOG: FORM KÉO DÀI THỜI GIAN */}
+      <Dialog
+        open={isExtensionDialogOpen}
+        onOpenChange={setIsExtensionDialogOpen}
+      >
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">
+              {editingExtension ? 'Cập nhật' : 'Thêm mới'} thông tin kéo dài
+              thời gian
+            </DialogTitle>
+          </DialogHeader>
+          <ExtensionForm
+            initialValues={editingExtension || {}}
+            onSubmit={handleSubmitExtension}
+            onCancel={() => setIsExtensionDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
