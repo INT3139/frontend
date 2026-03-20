@@ -26,6 +26,8 @@ import {
 } from '@/components/ui/tooltip';
 import { isRouteActive } from '@/lib/sidebar';
 import { cn } from '@/lib/utils';
+import { Route as academicAwardsRoute } from '@/routes/(protected)/_authenticated/academic-cv/academic-awards';
+import { Route as academicOtherRoute } from '@/routes/(protected)/_authenticated/academic-cv/academic-other';
 import { Route as academicProjectsRoute } from '@/routes/(protected)/_authenticated/academic-cv/projects';
 import { Route as academicScholarlyWorksRoute } from '@/routes/(protected)/_authenticated/academic-cv/scholarly-works';
 import { Route as personnelCVRoute } from '@/routes/(protected)/_authenticated/personnel-cv';
@@ -81,7 +83,7 @@ const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
         to: academicProjectsRoute.to,
       },
       {
-        label: 'Sách chuyên khảo/giáo trình',
+        label: 'Giáo trình & Sách chuyên khảo',
         to: academicScholarlyWorksRoute.to,
       },
       {
@@ -108,11 +110,11 @@ const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
       },
       {
         label: 'Giải thưởng',
-        to: '#',
+        to: academicAwardsRoute.to,
       },
       {
         label: 'Những thông tin khác về hoạt động KHCN',
-        to: '#',
+        to: academicOtherRoute.to,
       },
     ],
   },
