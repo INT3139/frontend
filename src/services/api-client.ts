@@ -1,7 +1,7 @@
 import ky from 'ky';
 
 const API_URL =
-  import.meta.env.PROD || !import.meta.env.VITE_ENABLE_MOCK_API
+  import.meta.env.PROD || import.meta.env.VITE_ENABLE_MOCK_API !== 'true'
     ? import.meta.env.VITE_API_URL
     : import.meta.env.VITE_MOCK_API_PREFIX;
 
