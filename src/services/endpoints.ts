@@ -5,6 +5,13 @@ const auth = {
 const profile = {
   me: '/profile/me',
   health: (userId: number | string) => `/profiles/${userId}/health`,
+  trainingProducts: (
+    userId: number | string,
+    trainingProductId?: number | string,
+  ) =>
+    trainingProductId
+      ? `/profiles/${userId}/training-products/${trainingProductId}`
+      : `/profiles/${userId}/training-products`,
 };
 
 const reward = {

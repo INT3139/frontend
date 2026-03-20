@@ -26,8 +26,10 @@ import {
 } from '@/components/ui/tooltip';
 import { isRouteActive } from '@/lib/sidebar';
 import { cn } from '@/lib/utils';
+import { Route as academicPatentsRoute } from '@/routes/(protected)/_authenticated/academic-cv/patents';
 import { Route as academicProjectsRoute } from '@/routes/(protected)/_authenticated/academic-cv/projects';
 import { Route as academicScholarlyWorksRoute } from '@/routes/(protected)/_authenticated/academic-cv/scholarly-works';
+import { Route as academicTrainingProductsRoute } from '@/routes/(protected)/_authenticated/academic-cv/training-products';
 import { Route as personnelCVRoute } from '@/routes/(protected)/_authenticated/personnel-cv';
 import { Link, useLocation } from '@tanstack/react-router';
 import {
@@ -86,16 +88,11 @@ const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
       },
       {
         label: 'Sản phẩm đào tạo',
-        to: '#',
-      },
-
-      {
-        label: 'Sản phẩm KH&CN dạng I & II',
-        to: '#',
+        to: academicTrainingProductsRoute.to,
       },
       {
         label: 'Phát minh sáng chế',
-        to: '#',
+        to: academicPatentsRoute.to,
       },
       {
         label: 'Bài báo khoa học',

@@ -1,6 +1,8 @@
-// TODO: replace with full profile type
-export type PartialProfile = {
-  userId: string;
-  emailVnu: string;
+export type Profile = {
+  id: number;
+  username: string;
+  password: string;
   fullName: string;
+  emailVnu: string;
+  unitId: number;
 };
