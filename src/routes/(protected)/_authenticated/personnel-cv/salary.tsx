@@ -1,5 +1,21 @@
+import { HeaderWrapper } from '@/components/main/HeaderWrapper';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { createFileRoute } from '@tanstack/react-router';
-import { Check, Edit, Eye, Plus, Save, Trash2, X } from 'lucide-react';
+import { Edit, Eye, PlusCircle, Save, Trash2, X } from 'lucide-react';
 import React, { useState } from 'react';
 
 export const Route = createFileRoute(
@@ -9,7 +25,30 @@ export const Route = createFileRoute(
 });
 
 // ==========================================
-// KHAI BÁO KIỂU DỮ LIỆU (Giúp ESLint vui vẻ)
+// COMPONENT TỰ CUSTOM (Thay thế cho Input/Label tránh lỗi thiếu module)
+// ==========================================
+const CustomInput = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
+  <input
+    {...props}
+    className={`flex h-9 w-full rounded-md border border-gray-300 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:border-[#008a70] focus-visible:ring-1 focus-visible:ring-[#008a70] focus-visible:outline-none ${props.className || ''}`}
+  />
+);
+
+const CustomLabel = ({
+  children,
+  className,
+  htmlFor,
+}: React.LabelHTMLAttributes<HTMLLabelElement>) => (
+  <label
+    htmlFor={htmlFor}
+    className={`text-sm leading-none font-medium text-gray-700 ${className || ''}`}
+  >
+    {children}
+  </label>
+);
+
+// ==========================================
+// KHAI BÁO KIỂU DỮ LIỆU
 // ==========================================
 type HistoryItemType = {
   id: number;
@@ -23,7 +62,6 @@ type HistoryItemType = {
   mocNangBac: string;
   soQD: string;
   nhomCD: string;
-  isEditing: boolean;
 };
 
 type ProposalItemType = {
@@ -39,11 +77,10 @@ type ProposalItemType = {
   heSoMoi: number | string;
   ngayTiepTheo: string;
   loaiNBL: string;
-  isEditing: boolean;
 };
 
 // ==========================================
-// COMPONENT 1: INFO ROW (Thông tin chung)
+// COMPONENT: INFO ROW (Thông tin chung)
 // ==========================================
 function InfoRow({
   label,
@@ -59,22 +96,21 @@ function InfoRow({
   name?: string;
 }) {
   return (
-    <div className="flex items-center text-sm">
-      <div className="w-56 shrink-0 font-semibold text-gray-700 md:w-64">
+    <div className="flex items-center border-b py-2 text-sm">
+      <div className="w-56 shrink-0 font-semibold tracking-wider text-gray-800 md:w-72">
         {label}
       </div>
       <div className="w-6 shrink-0 text-gray-600">:</div>
-      <div className="flex-1 text-gray-800">
+      <div className="flex-1 leading-relaxed text-gray-800">
         {isEditing ? (
-          <input
-            type="text"
+          <CustomInput
             name={name}
             value={value}
             onChange={onChange}
-            className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-[#008a70] focus:outline-none"
+            className="h-8"
           />
         ) : (
-          value
+          value || '---'
         )}
       </div>
     </div>
@@ -82,345 +118,292 @@ function InfoRow({
 }
 
 // ==========================================
-// COMPONENT 2: DÒNG NHẬT KÝ LƯƠNG
+// FORM DIALOG: NHẬT KÝ LƯƠNG
 // ==========================================
-function SalaryHistoryRow({
-  item,
-  index,
-  onEdit,
-  onSave,
-  onDelete,
-  onChange,
+function HistoryForm({
+  initialValues,
+  onSubmit,
+  onCancel,
 }: {
-  item: HistoryItemType;
-  index: number;
-  onEdit: (id: number) => void;
-  onSave: (id: number) => void;
-  onDelete: (id: number) => void;
-  onChange: (id: number, field: string, value: string) => void;
+  initialValues: Partial<HistoryItemType>;
+  onSubmit: (data: Partial<HistoryItemType>) => void;
+  onCancel: () => void;
 }) {
+  const [formData, setFormData] = useState<Partial<HistoryItemType>>({
+    maCD: '',
+    bacLuong: '',
+    heSoLuong: '',
+    mucLuong: '',
+    vuotKhung: '',
+    phuCap: '',
+    ngayHuong: '',
+    mocNangBac: '',
+    soQD: '',
+    nhomCD: '',
+    ...initialValues,
+  });
+
+  const handleChange = (
+    field: keyof HistoryItemType,
+    value: string | number,
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
-    <tr className="border-b border-gray-100 transition-colors hover:bg-gray-50">
-      <td className="w-20 p-3">
-        <div className="flex items-center justify-center gap-2">
-          {item.isEditing ? (
-            <button
-              onClick={() => onSave(item.id)}
-              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-green-100 text-green-600 transition-colors hover:bg-green-200"
-            >
-              <Check className="h-4 w-4" />
-            </button>
-          ) : (
-            <button
-              onClick={() => onEdit(item.id)}
-              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-blue-100 text-blue-600 transition-colors hover:bg-blue-200"
-            >
-              <Edit className="h-3.5 w-3.5" />
-            </button>
-          )}
-          <button
-            onClick={() => onDelete(item.id)}
-            className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-red-100 text-red-600 transition-colors hover:bg-red-200"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(formData);
+      }}
+      className="space-y-4 py-4"
+    >
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <CustomLabel>Mã chức danh</CustomLabel>
+          <CustomInput
+            value={formData.maCD}
+            onChange={(e) => handleChange('maCD', e.target.value)}
+          />
         </div>
-      </td>
-      <td className="w-12 p-3 text-center text-gray-600">{index + 1}</td>
-      <td className="p-3 font-medium text-gray-700">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.maCD}
-            onChange={(e) => onChange(item.id, 'maCD', e.target.value)}
+        <div className="space-y-2">
+          <CustomLabel>Nhóm chức danh</CustomLabel>
+          <CustomInput
+            value={formData.nhomCD}
+            onChange={(e) => handleChange('nhomCD', e.target.value)}
           />
-        ) : (
-          item.maCD
-        )}
-      </td>
-      <td className="p-3 text-center">
-        {item.isEditing ? (
-          <input
-            className="w-12 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.bacLuong}
-            onChange={(e) => onChange(item.id, 'bacLuong', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <CustomLabel>Bậc lương</CustomLabel>
+          <CustomInput
+            value={formData.bacLuong}
+            onChange={(e) => handleChange('bacLuong', e.target.value)}
           />
-        ) : (
-          item.bacLuong
-        )}
-      </td>
-      <td className="p-3 text-center">
-        {item.isEditing ? (
-          <input
+        </div>
+        <div className="space-y-2">
+          <CustomLabel>Hệ số lương</CustomLabel>
+          <CustomInput
             type="number"
-            className="w-16 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.heSoLuong}
-            onChange={(e) => onChange(item.id, 'heSoLuong', e.target.value)}
+            step="0.01"
+            value={formData.heSoLuong}
+            onChange={(e) => handleChange('heSoLuong', e.target.value)}
           />
-        ) : (
-          item.heSoLuong
-        )}
-      </td>
-      <td className="p-3 text-right font-semibold">
-        {item.isEditing ? (
-          <input
+        </div>
+        <div className="space-y-2">
+          <CustomLabel>Mức lương</CustomLabel>
+          <CustomInput
             type="number"
-            className="w-24 border-b border-gray-300 text-right outline-none focus:border-[#008a70]"
-            value={item.mucLuong}
-            onChange={(e) => onChange(item.id, 'mucLuong', e.target.value)}
+            value={formData.mucLuong}
+            onChange={(e) => handleChange('mucLuong', e.target.value)}
           />
-        ) : (
-          Number(item.mucLuong).toLocaleString('vi-VN')
-        )}
-      </td>
-      <td className="p-3 text-center">
-        {item.isEditing ? (
-          <input
-            className="w-16 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.vuotKhung}
-            onChange={(e) => onChange(item.id, 'vuotKhung', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <CustomLabel>Vượt khung (%)</CustomLabel>
+          <CustomInput
+            value={formData.vuotKhung}
+            onChange={(e) => handleChange('vuotKhung', e.target.value)}
           />
-        ) : (
-          item.vuotKhung
-        )}
-      </td>
-      <td className="p-3 text-center">
-        {item.isEditing ? (
-          <input
-            className="w-16 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.phuCap}
-            onChange={(e) => onChange(item.id, 'phuCap', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <CustomLabel>Phụ cấp</CustomLabel>
+          <CustomInput
+            value={formData.phuCap}
+            onChange={(e) => handleChange('phuCap', e.target.value)}
           />
-        ) : (
-          item.phuCap
-        )}
-      </td>
-      <td className="p-3 text-gray-600">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.ngayHuong}
-            onChange={(e) => onChange(item.id, 'ngayHuong', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <CustomLabel>Ngày hưởng</CustomLabel>
+          <CustomInput
+            value={formData.ngayHuong}
+            onChange={(e) => handleChange('ngayHuong', e.target.value)}
+            placeholder="DD/MM/YYYY"
           />
-        ) : (
-          item.ngayHuong
-        )}
-      </td>
-      <td className="p-3 text-gray-600">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.mocNangBac}
-            onChange={(e) => onChange(item.id, 'mocNangBac', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <CustomLabel>Mốc nâng bậc</CustomLabel>
+          <CustomInput
+            value={formData.mocNangBac}
+            onChange={(e) => handleChange('mocNangBac', e.target.value)}
+            placeholder="DD/MM/YYYY"
           />
-        ) : (
-          item.mocNangBac
-        )}
-      </td>
-      <td className="p-3 text-blue-600 italic">
-        {item.isEditing ? (
-          <input
-            className="w-20 border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.soQD}
-            onChange={(e) => onChange(item.id, 'soQD', e.target.value)}
+        </div>
+        <div className="space-y-2">
+          <CustomLabel>Số QĐ</CustomLabel>
+          <CustomInput
+            value={formData.soQD}
+            onChange={(e) => handleChange('soQD', e.target.value)}
           />
-        ) : (
-          item.soQD
-        )}
-      </td>
-      <td className="p-3 text-gray-600">
-        {item.isEditing ? (
-          <input
-            className="w-20 border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.nhomCD}
-            onChange={(e) => onChange(item.id, 'nhomCD', e.target.value)}
-          />
-        ) : (
-          item.nhomCD
-        )}
-      </td>
-    </tr>
+        </div>
+      </div>
+      <div className="flex justify-end gap-2 border-t pt-4">
+        <Button type="button" variant="secondary" onClick={onCancel}>
+          Hủy
+        </Button>
+        <Button type="submit">Xác nhận</Button>
+      </div>
+    </form>
   );
 }
 
 // ==========================================
-// COMPONENT 3: DÒNG ĐỀ XUẤT NÂNG LƯƠNG
+// FORM DIALOG: ĐỀ XUẤT NÂNG LƯƠNG
 // ==========================================
-function ProposalRow({
-  item,
-  index,
-  onEdit,
-  onSave,
-  onDelete,
-  onChange,
+function ProposalForm({
+  initialValues,
+  onSubmit,
+  onCancel,
 }: {
-  item: ProposalItemType;
-  index: number;
-  onEdit: (id: number) => void;
-  onSave: (id: number) => void;
-  onDelete: (id: number) => void;
-  onChange: (id: number, field: string, value: string) => void;
+  initialValues: Partial<ProposalItemType>;
+  onSubmit: (data: Partial<ProposalItemType>) => void;
+  onCancel: () => void;
 }) {
+  const [formData, setFormData] = useState<Partial<ProposalItemType>>({
+    maCD: '',
+    bacCu: '',
+    heSoCu: '',
+    ngayHuong: '',
+    tenCD: '',
+    dinhKem: false,
+    trangThai: 'Nháp',
+    bacMoi: '',
+    heSoMoi: '',
+    ngayTiepTheo: '',
+    loaiNBL: '',
+    ...initialValues,
+  });
+
+  const handleChange = (
+    field: keyof ProposalItemType,
+    value: string | number | boolean,
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
-    <tr className="text-center transition-colors hover:bg-gray-50">
-      <td className="border border-gray-200 p-3">
-        <div className="flex items-center justify-center gap-2">
-          <button className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-[#e0f2ef] text-[#008a70] transition-colors hover:bg-[#c2e5de]">
-            <Eye className="h-3.5 w-3.5" />
-          </button>
-
-          {item.isEditing ? (
-            <button
-              onClick={() => onSave(item.id)}
-              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-green-100 text-green-600 transition-colors hover:bg-green-200"
-            >
-              <Check className="h-4 w-4" />
-            </button>
-          ) : (
-            <button
-              onClick={() => onEdit(item.id)}
-              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-blue-100 text-blue-600 transition-colors hover:bg-blue-200"
-            >
-              <Edit className="h-3.5 w-3.5" />
-            </button>
-          )}
-          <button
-            onClick={() => onDelete(item.id)}
-            className="flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-red-100 text-red-600 transition-colors hover:bg-red-200"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(formData);
+      }}
+      className="space-y-4 py-4"
+    >
+      <div className="rounded-md border bg-gray-50/50 p-4 shadow-sm">
+        <h4 className="mb-3 font-semibold text-[#008a70]">
+          Lương trước nâng bậc
+        </h4>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <CustomLabel>Tên CDNN</CustomLabel>
+            <CustomInput
+              value={formData.tenCD}
+              onChange={(e) => handleChange('tenCD', e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <CustomLabel>Mã CDNN</CustomLabel>
+            <CustomInput
+              value={formData.maCD}
+              onChange={(e) => handleChange('maCD', e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <CustomLabel>Bậc cũ</CustomLabel>
+            <CustomInput
+              value={formData.bacCu}
+              onChange={(e) => handleChange('bacCu', e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <CustomLabel>Hệ số cũ</CustomLabel>
+            <CustomInput
+              type="number"
+              step="0.01"
+              value={formData.heSoCu}
+              onChange={(e) => handleChange('heSoCu', e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <CustomLabel>Ngày hưởng</CustomLabel>
+            <CustomInput
+              value={formData.ngayHuong}
+              onChange={(e) => handleChange('ngayHuong', e.target.value)}
+              placeholder="DD/MM/YYYY"
+            />
+          </div>
         </div>
-      </td>
-      <td className="border border-gray-200 p-3 text-gray-600">{index + 1}</td>
+      </div>
 
-      <td className="border border-gray-200 p-3">
-        {item.isEditing ? (
-          <input
-            className="w-20 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.maCD}
-            onChange={(e) => onChange(item.id, 'maCD', e.target.value)}
-          />
-        ) : (
-          item.maCD
-        )}
-      </td>
-      <td className="border border-gray-200 p-3">
-        {item.isEditing ? (
-          <input
-            className="w-12 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.bacCu}
-            onChange={(e) => onChange(item.id, 'bacCu', e.target.value)}
-          />
-        ) : (
-          item.bacCu
-        )}
-      </td>
-      <td className="border border-gray-200 p-3 font-medium">
-        {item.isEditing ? (
-          <input
-            type="number"
-            className="w-16 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.heSoCu}
-            onChange={(e) => onChange(item.id, 'heSoCu', e.target.value)}
-          />
-        ) : (
-          item.heSoCu
-        )}
-      </td>
-      <td className="border border-gray-200 p-3">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.ngayHuong}
-            onChange={(e) => onChange(item.id, 'ngayHuong', e.target.value)}
-          />
-        ) : (
-          item.ngayHuong
-        )}
-      </td>
-      <td className="border border-gray-200 p-3 text-left">
-        {item.isEditing ? (
-          <input
-            className="w-full border-b border-gray-300 outline-none focus:border-[#008a70]"
-            value={item.tenCD}
-            onChange={(e) => onChange(item.id, 'tenCD', e.target.value)}
-          />
-        ) : (
-          item.tenCD
-        )}
-      </td>
+      <div className="rounded-md border bg-green-50/30 p-4 shadow-sm">
+        <h4 className="mb-3 font-semibold text-[#008a70]">Đề nghị nâng bậc</h4>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <CustomLabel>Bậc mới</CustomLabel>
+            <CustomInput
+              value={formData.bacMoi}
+              onChange={(e) => handleChange('bacMoi', e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <CustomLabel>Hệ số mới</CustomLabel>
+            <CustomInput
+              type="number"
+              step="0.01"
+              value={formData.heSoMoi}
+              onChange={(e) => handleChange('heSoMoi', e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <CustomLabel>Ngày tăng H/s</CustomLabel>
+            <CustomInput
+              value={formData.ngayTiepTheo}
+              onChange={(e) => handleChange('ngayTiepTheo', e.target.value)}
+              placeholder="DD/MM/YYYY"
+            />
+          </div>
+          <div className="space-y-2">
+            <CustomLabel>Loại NBL</CustomLabel>
+            <CustomInput
+              value={formData.loaiNBL}
+              onChange={(e) => handleChange('loaiNBL', e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <CustomLabel>Trạng thái</CustomLabel>
+            <CustomInput
+              value={formData.trangThai}
+              onChange={(e) => handleChange('trangThai', e.target.value)}
+            />
+          </div>
+          <div className="flex items-center space-x-2 pt-8">
+            <input
+              type="checkbox"
+              id="dinhKem"
+              checked={formData.dinhKem}
+              onChange={(e) => handleChange('dinhKem', e.target.checked)}
+              className="h-4 w-4 cursor-pointer rounded border-gray-300 accent-[#008a70]"
+            />
+            <CustomLabel htmlFor="dinhKem" className="cursor-pointer">
+              Có tệp đính kèm
+            </CustomLabel>
+          </div>
+        </div>
+      </div>
 
-      <td className="border border-gray-200 p-3">
-        {item.dinhKem && (
-          <span className="cursor-pointer text-[#008a70]">📎</span>
-        )}
-      </td>
-
-      <td className="border border-gray-200 p-3">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 text-center text-xs outline-none focus:border-[#008a70]"
-            value={item.trangThai}
-            onChange={(e) => onChange(item.id, 'trangThai', e.target.value)}
-          />
-        ) : (
-          <span className="rounded-full bg-blue-50 px-2 py-1 text-[10px] font-bold text-blue-600 uppercase">
-            {item.trangThai}
-          </span>
-        )}
-      </td>
-
-      <td className="border border-gray-200 p-3 font-bold text-[#008a70]">
-        {item.isEditing ? (
-          <input
-            className="w-12 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.bacMoi}
-            onChange={(e) => onChange(item.id, 'bacMoi', e.target.value)}
-          />
-        ) : (
-          item.bacMoi
-        )}
-      </td>
-      <td className="border border-gray-200 p-3 font-bold text-[#008a70]">
-        {item.isEditing ? (
-          <input
-            type="number"
-            className="w-16 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.heSoMoi}
-            onChange={(e) => onChange(item.id, 'heSoMoi', e.target.value)}
-          />
-        ) : (
-          item.heSoMoi
-        )}
-      </td>
-      <td className="border border-gray-200 p-3">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.ngayTiepTheo}
-            onChange={(e) => onChange(item.id, 'ngayTiepTheo', e.target.value)}
-          />
-        ) : (
-          item.ngayTiepTheo
-        )}
-      </td>
-      <td className="border border-gray-200 p-3 italic">
-        {item.isEditing ? (
-          <input
-            className="w-24 border-b border-gray-300 text-center outline-none focus:border-[#008a70]"
-            value={item.loaiNBL}
-            onChange={(e) => onChange(item.id, 'loaiNBL', e.target.value)}
-          />
-        ) : (
-          item.loaiNBL
-        )}
-      </td>
-    </tr>
+      <div className="flex justify-end gap-2 border-t pt-4">
+        <Button type="button" variant="secondary" onClick={onCancel}>
+          Hủy
+        </Button>
+        <Button type="submit">Xác nhận</Button>
+      </div>
+    </form>
   );
 }
 
+// ==========================================
+// MÀN HÌNH CHÍNH
+// ==========================================
 function RouteComponent() {
+  // --- STATE: THÔNG TIN CHUNG ---
   const [isEditingTop, setIsEditingTop] = useState(false);
   const [salaryInfo, setSalaryInfo] = useState({
     ngayHuong: '',
@@ -455,6 +438,7 @@ function RouteComponent() {
     setIsEditingTop(false);
   };
 
+  // --- STATE: NHẬT KÝ LƯƠNG ---
   const [historyList, setHistoryList] = useState<HistoryItemType[]>([
     {
       id: 1,
@@ -468,50 +452,43 @@ function RouteComponent() {
       mocNangBac: '01/01/2027',
       soQD: '',
       nhomCD: '',
-      isEditing: false,
     },
   ]);
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
+  const [editingHistory, setEditingHistory] = useState<HistoryItemType | null>(
+    null,
+  );
 
-  const handleAddHistory = () => {
-    setHistoryList([
-      {
-        id: Date.now(),
-        maCD: '',
-        bacLuong: '',
-        heSoLuong: 0,
-        mucLuong: 0,
-        vuotKhung: '',
-        phuCap: '',
-        ngayHuong: '',
-        mocNangBac: '',
-        soQD: '',
-        nhomCD: '',
-        isEditing: true,
-      },
-      ...historyList,
-    ]);
+  const handleOpenHistoryForm = (item: HistoryItemType | null = null) => {
+    setEditingHistory(item);
+    setIsHistoryDialogOpen(true);
   };
-  const handleEditHistory = (id: number) =>
-    setHistoryList(
-      historyList.map((item) =>
-        item.id === id ? { ...item, isEditing: true } : item,
-      ),
-    );
-  const handleSaveHistory = (id: number) =>
-    setHistoryList(
-      historyList.map((item) =>
-        item.id === id ? { ...item, isEditing: false } : item,
-      ),
-    );
-  const handleDeleteHistory = (id: number) =>
-    setHistoryList(historyList.filter((item) => item.id !== id));
-  const handleChangeHistory = (id: number, field: string, value: string) =>
-    setHistoryList(
-      historyList.map((item) =>
-        item.id === id ? { ...item, [field]: value } : item,
-      ),
-    );
 
+  const handleSubmitHistory = (data: Partial<HistoryItemType>) => {
+    if (editingHistory) {
+      setHistoryList(
+        historyList.map((item) =>
+          item.id === editingHistory.id
+            ? ({ ...item, ...data } as HistoryItemType)
+            : item,
+        ),
+      );
+    } else {
+      setHistoryList([
+        { ...data, id: Date.now() } as HistoryItemType,
+        ...historyList,
+      ]);
+    }
+    setIsHistoryDialogOpen(false);
+  };
+
+  const handleDeleteHistory = (id: number) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa bản ghi này?')) {
+      setHistoryList(historyList.filter((item) => item.id !== id));
+    }
+  };
+
+  // --- STATE: ĐỀ XUẤT NÂNG LƯƠNG ---
   const [proposalList, setProposalList] = useState<ProposalItemType[]>([
     {
       id: 1,
@@ -526,430 +503,518 @@ function RouteComponent() {
       heSoMoi: 4.32,
       ngayTiepTheo: '01/01/2024',
       loaiNBL: 'Thường xuyên',
-      isEditing: false,
     },
   ]);
+  const [isProposalDialogOpen, setIsProposalDialogOpen] = useState(false);
+  const [editingProposal, setEditingProposal] =
+    useState<ProposalItemType | null>(null);
 
-  const handleAddProposal = () => {
-    setProposalList([
-      {
-        id: Date.now(),
-        maCD: '',
-        bacCu: '',
-        heSoCu: 0,
-        ngayHuong: '',
-        tenCD: '',
-        dinhKem: false,
-        trangThai: 'Nháp',
-        bacMoi: '',
-        heSoMoi: 0,
-        ngayTiepTheo: '',
-        loaiNBL: '',
-        isEditing: true,
-      },
-      ...proposalList,
-    ]);
+  const handleOpenProposalForm = (item: ProposalItemType | null = null) => {
+    setEditingProposal(item);
+    setIsProposalDialogOpen(true);
   };
-  const handleEditProposal = (id: number) =>
-    setProposalList(
-      proposalList.map((item) =>
-        item.id === id ? { ...item, isEditing: true } : item,
-      ),
-    );
-  const handleSaveProposal = (id: number) =>
-    setProposalList(
-      proposalList.map((item) =>
-        item.id === id ? { ...item, isEditing: false } : item,
-      ),
-    );
-  const handleDeleteProposal = (id: number) =>
-    setProposalList(proposalList.filter((item) => item.id !== id));
-  const handleChangeProposal = (id: number, field: string, value: string) =>
-    setProposalList(
-      proposalList.map((item) =>
-        item.id === id ? { ...item, [field]: value } : item,
-      ),
-    );
+
+  const handleSubmitProposal = (data: Partial<ProposalItemType>) => {
+    if (editingProposal) {
+      setProposalList(
+        proposalList.map((item) =>
+          item.id === editingProposal.id
+            ? ({ ...item, ...data } as ProposalItemType)
+            : item,
+        ),
+      );
+    } else {
+      setProposalList([
+        { ...data, id: Date.now() } as ProposalItemType,
+        ...proposalList,
+      ]);
+    }
+    setIsProposalDialogOpen(false);
+  };
+
+  const handleDeleteProposal = (id: number) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa bản ghi này?')) {
+      setProposalList(proposalList.filter((item) => item.id !== id));
+    }
+  };
 
   return (
-    <div className="flex min-h-screen justify-center font-sans">
-      <div className="flex w-full flex-col border border-gray-200 bg-white shadow-sm">
-        {/* --- HEADER THÔNG TIN LƯƠNG --- */}
-        <div className="flex items-center justify-between border-b border-gray-200 bg-[#f0f9f6] p-3">
-          <h1 className="ml-2 text-base font-bold text-[#008a70] uppercase md:text-lg">
-            Thông tin lương
-          </h1>
-          <div className="flex gap-2">
-            {!isEditingTop ? (
-              <button
-                onClick={() => setIsEditingTop(true)}
-                className="flex items-center gap-2 rounded bg-[#f5b027] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-yellow-500"
+    <div className="flex flex-col">
+      <HeaderWrapper title="Thông tin lương">
+        <div className="flex gap-2">
+          {!isEditingTop ? (
+            <Button variant="outline" onClick={() => setIsEditingTop(true)}>
+              <Edit className="mr-2 h-4 w-4" /> Chỉnh sửa thông tin
+            </Button>
+          ) : (
+            <>
+              <Button
+                variant="secondary"
+                onClick={() => setIsEditingTop(false)}
               >
-                <Edit className="h-4 w-4" />
-                Cập nhật
-              </button>
-            ) : (
-              <>
-                <button
-                  onClick={() => setIsEditingTop(false)}
-                  className="flex items-center gap-2 rounded bg-gray-500 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-600"
-                >
-                  <X className="h-4 w-4" />
-                  Hủy
-                </button>
-                <button
-                  onClick={handleSaveTop}
-                  className="flex items-center gap-2 rounded bg-[#00a680] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-teal-700"
-                >
-                  <Save className="h-4 w-4" />
-                  Lưu
-                </button>
-              </>
-            )}
+                <X className="mr-2 h-4 w-4" /> Hủy
+              </Button>
+              <Button onClick={handleSaveTop}>
+                <Save className="mr-2 h-4 w-4" /> Lưu
+              </Button>
+            </>
+          )}
+        </div>
+      </HeaderWrapper>
+
+      <div className="space-y-8 px-4 py-6">
+        {/* PHẦN 1: THÔNG TIN CHUNG */}
+        <div>
+          <h3 className="mb-4 text-lg font-bold text-gray-800">
+            I. Thông tin chung
+          </h3>
+          <div className="grid grid-cols-1 gap-x-12 lg:grid-cols-2">
+            <div className="space-y-1">
+              <InfoRow
+                label="Ngày hưởng chế độ lương"
+                name="ngayHuong"
+                value={salaryInfo.ngayHuong}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Nhóm chức danh nghề nghiệp"
+                name="nhomCDNN"
+                value={salaryInfo.nhomCDNN}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Mã chức danh nghề nghiệp"
+                name="maCDNN"
+                value={salaryInfo.maCDNN}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Hệ số lương"
+                name="heSoLuong"
+                value={salaryInfo.heSoLuong}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Phụ cấp chức vụ, chức danh"
+                name="phuCapCV"
+                value={salaryInfo.phuCapCV}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Phụ cấp khác"
+                name="phuCapKhac"
+                value={salaryInfo.phuCapKhac}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Phụ cấp trách nhiệm"
+                name="phuCapTN"
+                value={salaryInfo.phuCapTN}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Phụ cấp ưu đãi nhà giáo"
+                name="phuCapUD"
+                value={salaryInfo.phuCapUD}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Phụ cấp khác (khu vực, lưu động)"
+                name="phuCapKhuVuc"
+                value={salaryInfo.phuCapKhuVuc}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Tỉ lệ hưởng (%)"
+                name="tiLeHuong"
+                value={salaryInfo.tiLeHuong}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Mốc nâng bậc tiếp theo"
+                name="mocNangBac"
+                value={salaryInfo.mocNangBac}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Ghi chú"
+                name="ghiChu"
+                value={salaryInfo.ghiChu}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="space-y-1">
+              <InfoRow
+                label="Số quyết định"
+                name="soQD"
+                value={salaryInfo.soQD}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Chức danh nghề nghiệp"
+                name="chucDanhNN"
+                value={salaryInfo.chucDanhNN}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Bậc lương"
+                name="bacLuong"
+                value={salaryInfo.bacLuong}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Vượt khung"
+                name="vuotKhung"
+                value={salaryInfo.vuotKhung}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Phụ cấp thâm niên nhà giáo"
+                name="phuCapThamNien"
+                value={salaryInfo.phuCapThamNien}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Phụ cấp độc hại"
+                name="phuCapDocHai"
+                value={salaryInfo.phuCapDocHai}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Hệ số thực hưởng"
+                name="heSoThucHuong"
+                value={salaryInfo.heSoThucHuong}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+              <InfoRow
+                label="Ngày tăng hệ số PCTNVK tiếp theo"
+                name="ngayTangHeSo"
+                value={salaryInfo.ngayTangHeSo}
+                isEditing={isEditingTop}
+                onChange={handleInputChange}
+              />
+            </div>
           </div>
         </div>
 
-        <div className="flex-1 p-6 md:p-8">
-          <div>
-            <h3 className="mb-6 font-bold text-[#008a70] uppercase">
-              Thông tin chung
+        {/* PHẦN 2: NHẬT KÝ LƯƠNG */}
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-bold text-gray-800">
+              II. Nhật ký lương
             </h3>
-            <div className="grid grid-cols-1 gap-x-16 gap-y-4 lg:grid-cols-2">
-              <div className="space-y-4">
-                <InfoRow
-                  label="Ngày hưởng chế độ lương"
-                  name="ngayHuong"
-                  value={salaryInfo.ngayHuong}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Nhóm chức danh nghề nghiệp"
-                  name="nhomCDNN"
-                  value={salaryInfo.nhomCDNN}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Mã chức danh nghề nghiệp"
-                  name="maCDNN"
-                  value={salaryInfo.maCDNN}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Hệ số lương"
-                  name="heSoLuong"
-                  value={salaryInfo.heSoLuong}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Phụ cấp chức vụ, chức danh"
-                  name="phuCapCV"
-                  value={salaryInfo.phuCapCV}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Phụ cấp khác"
-                  name="phuCapKhac"
-                  value={salaryInfo.phuCapKhac}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Phụ cấp trách nhiệm"
-                  name="phuCapTN"
-                  value={salaryInfo.phuCapTN}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Phụ cấp ưu đãi nhà giáo"
-                  name="phuCapUD"
-                  value={salaryInfo.phuCapUD}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Phụ cấp khác (khu vực, lưu động)"
-                  name="phuCapKhuVuc"
-                  value={salaryInfo.phuCapKhuVuc}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Tỉ lệ hướng (%)"
-                  name="tiLeHuong"
-                  value={salaryInfo.tiLeHuong}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Mốc nâng bậc tiếp theo"
-                  name="mocNangBac"
-                  value={salaryInfo.mocNangBac}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Ghi chú"
-                  name="ghiChu"
-                  value={salaryInfo.ghiChu}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="space-y-4">
-                <InfoRow
-                  label="Số quyết định"
-                  name="soQD"
-                  value={salaryInfo.soQD}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Chức danh nghề nghiệp"
-                  name="chucDanhNN"
-                  value={salaryInfo.chucDanhNN}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Bậc lương"
-                  name="bacLuong"
-                  value={salaryInfo.bacLuong}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Vượt khung"
-                  name="vuotKhung"
-                  value={salaryInfo.vuotKhung}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Phụ cấp thâm niên nhà giáo"
-                  name="phuCapThamNien"
-                  value={salaryInfo.phuCapThamNien}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Phụ cấp độc hại"
-                  name="phuCapDocHai"
-                  value={salaryInfo.phuCapDocHai}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Hệ số thực hưởng"
-                  name="heSoThucHuong"
-                  value={salaryInfo.heSoThucHuong}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Ngày tăng hệ số PCTNVK tiếp theo"
-                  name="ngayTangHeSo"
-                  value={salaryInfo.ngayTangHeSo}
-                  isEditing={isEditingTop}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
+            <Button onClick={() => handleOpenHistoryForm(null)}>
+              <PlusCircle className="mr-2 h-4 w-4" /> Thêm mới
+            </Button>
           </div>
-
-          <div className="my-8 border-t border-gray-300"></div>
-
-          <div>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-[#008a70] uppercase">
-                Nhật ký lương
-              </h3>
-              <button
-                onClick={handleAddHistory}
-                className="flex items-center gap-2 rounded bg-[#008a70] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-teal-700"
-              >
-                <Plus className="h-4 w-4" /> Thêm mới
-              </button>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-max border-collapse text-left text-sm">
-                <thead className="bg-[#f8fafc] text-gray-800">
-                  <tr>
-                    <th className="w-20 border border-gray-200 px-4 py-3 text-center font-semibold">
-                      Thao tác
-                    </th>
-                    <th className="w-12 border border-gray-200 px-4 py-3 text-center font-semibold">
-                      STT
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      Mã chức danh
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-center font-semibold">
-                      Bậc
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-center font-semibold">
-                      Hệ số
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-right font-semibold">
-                      Mức lương
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-center font-semibold">
-                      Vượt khung
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 text-center font-semibold">
-                      Phụ cấp
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      Ngày hưởng
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      Mốc nâng bậc
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      Số QĐ
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3 font-semibold">
-                      Nhóm CD
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {historyList.map((item, index) => (
-                    <SalaryHistoryRow
-                      key={item.id}
-                      item={item}
-                      index={index}
-                      onEdit={handleEditHistory}
-                      onSave={handleSaveHistory}
-                      onDelete={handleDeleteHistory}
-                      onChange={handleChangeHistory}
-                    />
-                  ))}
-                  {historyList.length === 0 && (
-                    <tr>
-                      <td
-                        colSpan={12}
-                        className="p-4 text-center text-gray-500"
-                      >
-                        Chưa có dữ liệu nhật ký lương.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+          <div className="overflow-hidden rounded-md border text-sm">
+            <Table>
+              <TableHeader className="bg-slate-50">
+                <TableRow>
+                  <TableHead className="w-24 text-center font-semibold text-gray-800">
+                    Thao tác
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Số QĐ
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-800">
+                    Nhóm CD
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-800">
+                    Mã CD
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Bậc
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Hệ số
+                  </TableHead>
+                  <TableHead className="text-right font-semibold text-gray-800">
+                    Mức lương
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Vượt khung
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Phụ cấp
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-800">
+                    Ngày hưởng
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-800">
+                    Mốc nâng bậc
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {historyList.length > 0 ? (
+                  historyList.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="text-center">
+                        <div className="flex justify-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 px-0 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                            onClick={() => handleOpenHistoryForm(item)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 px-0 text-red-600 hover:bg-red-50 hover:text-red-700"
+                            onClick={() => handleDeleteHistory(item.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center text-blue-600 italic">
+                        {item.soQD || '---'}
+                      </TableCell>
+                      <TableCell>{item.nhomCD || '---'}</TableCell>
+                      <TableCell className="font-medium text-gray-700">
+                        {item.maCD || '---'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.bacLuong || '---'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.heSoLuong || '---'}
+                      </TableCell>
+                      <TableCell className="text-right font-semibold">
+                        {item.mucLuong
+                          ? Number(item.mucLuong).toLocaleString('vi-VN')
+                          : '---'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.vuotKhung || '---'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.phuCap || '---'}
+                      </TableCell>
+                      <TableCell>{item.ngayHuong || '---'}</TableCell>
+                      <TableCell>{item.mocNangBac || '---'}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={11}
+                      className="h-32 text-center text-gray-500"
+                    >
+                      Chưa có dữ liệu nhật ký lương.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </div>
+        </div>
 
-          <div className="my-8 border-t border-gray-300"></div>
-
-          <div>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-[#008a70] uppercase">
-                Đề xuất nâng lương
-              </h3>
-              <button
-                onClick={handleAddProposal}
-                className="flex items-center gap-2 rounded bg-[#008a70] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-teal-700"
-              >
-                <Plus className="h-4 w-4" /> Tạo đề xuất mới
-              </button>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-max border-collapse text-left text-sm">
-                <thead className="bg-[#f8fafc] text-center text-gray-800">
-                  <tr>
-                    <th
-                      rowSpan={2}
-                      className="border border-gray-200 px-4 py-3"
+        {/* PHẦN 3: ĐỀ XUẤT NÂNG LƯƠNG */}
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-bold text-gray-800">
+              III. Đề xuất nâng lương
+            </h3>
+            <Button onClick={() => handleOpenProposalForm(null)}>
+              <PlusCircle className="mr-2 h-4 w-4" /> Tạo đề xuất mới
+            </Button>
+          </div>
+          <div className="overflow-hidden rounded-md border text-sm">
+            <Table>
+              <TableHeader className="bg-slate-50">
+                <TableRow>
+                  <TableHead
+                    rowSpan={2}
+                    className="w-24 border-r border-gray-200 text-center align-middle font-semibold text-gray-800"
+                  >
+                    Thao tác
+                  </TableHead>
+                  <TableHead
+                    colSpan={6}
+                    className="border-r border-b border-gray-200 bg-gray-100/50 text-center font-bold text-gray-800 uppercase"
+                  >
+                    Lương trước nâng bậc
+                  </TableHead>
+                  <TableHead
+                    colSpan={4}
+                    className="border-b border-gray-200 bg-green-50/50 text-center font-bold text-[#008a70] uppercase"
+                  >
+                    Đề nghị nâng bậc
+                  </TableHead>
+                </TableRow>
+                <TableRow>
+                  <TableHead className="font-semibold text-gray-800">
+                    Tên CDNN
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-800">
+                    Mã CDNN
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Bậc cũ
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Hệ số cũ
+                  </TableHead>
+                  <TableHead className="border-r border-gray-200 font-semibold text-gray-800">
+                    Ngày hưởng
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-800">
+                    Đính kèm
+                  </TableHead>
+                  <TableHead className="bg-green-50/50 text-center font-semibold text-[#008a70]">
+                    Bậc mới
+                  </TableHead>
+                  <TableHead className="bg-green-50/50 text-center font-semibold text-[#008a70]">
+                    Hệ số mới
+                  </TableHead>
+                  <TableHead className="bg-green-50/50 text-center font-semibold text-gray-800">
+                    Ngày tăng H/s
+                  </TableHead>
+                  <TableHead className="bg-green-50/50 text-center font-semibold text-gray-800">
+                    Trạng thái
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {proposalList.length > 0 ? (
+                  proposalList.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="border-r border-gray-200 text-center">
+                        <div className="flex justify-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 px-0 text-teal-600 hover:bg-teal-50 hover:text-teal-700"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 px-0 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                            onClick={() => handleOpenProposalForm(item)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 px-0 text-red-600 hover:bg-red-50 hover:text-red-700"
+                            onClick={() => handleDeleteProposal(item.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium text-gray-700">
+                        {item.tenCD || '---'}
+                      </TableCell>
+                      <TableCell>{item.maCD || '---'}</TableCell>
+                      <TableCell className="text-center">
+                        {item.bacCu || '---'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.heSoCu || '---'}
+                      </TableCell>
+                      <TableCell className="border-r border-gray-200">
+                        {item.ngayHuong || '---'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.dinhKem ? (
+                          <span className="text-[#008a70]">📎</span>
+                        ) : (
+                          '---'
+                        )}
+                      </TableCell>
+                      <TableCell className="bg-green-50/10 text-center font-bold text-[#008a70]">
+                        {item.bacMoi || '---'}
+                      </TableCell>
+                      <TableCell className="bg-green-50/10 text-center font-bold text-[#008a70]">
+                        {item.heSoMoi || '---'}
+                      </TableCell>
+                      <TableCell className="bg-green-50/10 text-center">
+                        {item.ngayTiepTheo || '---'}
+                      </TableCell>
+                      <TableCell className="bg-green-50/10 text-center">
+                        <span className="rounded-full bg-blue-50 px-2 py-1 text-[10px] font-bold text-blue-600 uppercase">
+                          {item.trangThai || 'Nháp'}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={11}
+                      className="h-32 text-center text-gray-500"
                     >
-                      Thao tác
-                    </th>
-                    <th
-                      rowSpan={2}
-                      className="border border-gray-200 px-4 py-3"
-                    >
-                      STT
-                    </th>
-                    <th
-                      colSpan={7}
-                      className="border border-gray-200 px-4 py-3 uppercase"
-                    >
-                      Lương trước nâng bậc
-                    </th>
-                    <th
-                      colSpan={4}
-                      className="border border-gray-200 px-4 py-3 uppercase"
-                    >
-                      Đề nghị nâng bậc
-                    </th>
-                  </tr>
-                  <tr>
-                    <th className="border border-gray-200 px-4 py-3">
-                      Mã CDNN
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3">Bậc</th>
-                    <th className="border border-gray-200 px-4 py-3">
-                      Hệ số cũ
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3">
-                      Ngày hưởng
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3">
-                      Tên CDNN
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3">
-                      Đính kèm
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3">
-                      Trạng thái
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3">
-                      Bậc mới
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3">
-                      Hệ số mới
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3">
-                      Ngày tăng H/s
-                    </th>
-                    <th className="border border-gray-200 px-4 py-3">
-                      Loại NBL
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {proposalList.map((item, index) => (
-                    <ProposalRow
-                      key={item.id}
-                      item={item}
-                      index={index}
-                      onEdit={handleEditProposal}
-                      onSave={handleSaveProposal}
-                      onDelete={handleDeleteProposal}
-                      onChange={handleChangeProposal}
-                    />
-                  ))}
-                  {proposalList.length === 0 && (
-                    <tr>
-                      <td
-                        colSpan={13}
-                        className="p-4 text-center text-gray-500"
-                      >
-                        Chưa có đề xuất nâng lương nào.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                      Chưa có đề xuất nâng lương nào.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </div>
         </div>
       </div>
+
+      {/* DIALOG: NHẬT KÝ LƯƠNG */}
+      <Dialog open={isHistoryDialogOpen} onOpenChange={setIsHistoryDialogOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">
+              {editingHistory ? 'Cập nhật' : 'Thêm mới'} nhật ký lương
+            </DialogTitle>
+          </DialogHeader>
+          <HistoryForm
+            initialValues={editingHistory || {}}
+            onSubmit={handleSubmitHistory}
+            onCancel={() => setIsHistoryDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* DIALOG: ĐỀ XUẤT NÂNG LƯƠNG */}
+      <Dialog
+        open={isProposalDialogOpen}
+        onOpenChange={setIsProposalDialogOpen}
+      >
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">
+              {editingProposal ? 'Cập nhật' : 'Tạo'} đề xuất nâng lương
+            </DialogTitle>
+          </DialogHeader>
+          <ProposalForm
+            initialValues={editingProposal || {}}
+            onSubmit={handleSubmitProposal}
+            onCancel={() => setIsProposalDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
