@@ -16,6 +16,13 @@ const reward = {
   discipline: '/reward/discipline',
 };
 
+const family = {
+  me: '/personnel-cv/family/me',
+};
+
+const other = {
+  me: '/personnel-cv/other/me', 
+};
 const academicCv = {
   scholarlyWorks: '/academic-cv/scholarly-works',
   scientificArticles: '/academic-cv/scientific-articles',
@@ -26,5 +33,7 @@ export const ENDPOINTS = {
   auth,
   profile,
   reward,
+  family,
+  other,
   academicCv,
 } as const;
