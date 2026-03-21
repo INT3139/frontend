@@ -17,8 +17,8 @@ export const TRAINING_PRODUCT_RECORD_MAP = {
   [TRAINING_PRODUCT_RECORD.THESIS_TITLE]: 'Tên khóa luận/luận văn/luận án',
   [TRAINING_PRODUCT_RECORD.ASSIGNMENT]: 'Nhiệm vụ/Đề tài',
   [TRAINING_PRODUCT_RECORD.EDUCATION_LEVEL]: 'Trình độ đào tạo',
-  [TRAINING_PRODUCT_RECORD.START_TIME]: 'Thời gian bắt đầu',
-  [TRAINING_PRODUCT_RECORD.END_TIME]: 'Thời gian kết thúc',
+  [TRAINING_PRODUCT_RECORD.START_TIME]: 'Thời gian bắt đầu đào tạo',
+  [TRAINING_PRODUCT_RECORD.END_TIME]: 'Thời gian kết thúc đào tạo',
 } as const;
 
 export type TrainingProductRecord = {

@@ -1,4 +1,4 @@
-import { isFuture, isValid, parse } from 'date-fns';
+import { isAfter, isFuture, isValid, parse } from 'date-fns';
 
 const genericParse = (date: string | Date, format: string) => {
   if (typeof date === 'string') {
@@ -13,4 +13,11 @@ export const isValidDate = (date: string | Date, format = 'dd/MM/yyyy') => {
 
 export const isFutureDate = (date: string | Date, format = 'dd/MM/yyyy') => {
   return isFuture(genericParse(date, format));
+};
+export const isAfterDate = (
+  date: string | Date,
+  compareDate: string | Date,
+  format = 'dd/MM/yyyy',
+) => {
+  return isAfter(genericParse(date, format), genericParse(compareDate, format));
 };
