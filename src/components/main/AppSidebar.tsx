@@ -26,7 +26,6 @@ import {
 } from '@/components/ui/tooltip';
 import { isRouteActive } from '@/lib/sidebar';
 import { cn } from '@/lib/utils';
-import { Route as academicPatentsRoute } from '@/routes/(protected)/_authenticated/academic-cv/patents';
 import { Route as academicProjectsRoute } from '@/routes/(protected)/_authenticated/academic-cv/projects';
 import { Route as academicScholarlyWorksRoute } from '@/routes/(protected)/_authenticated/academic-cv/scholarly-works';
 import { Route as academicTrainingProductsRoute } from '@/routes/(protected)/_authenticated/academic-cv/training-products';
@@ -92,7 +91,7 @@ const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
       },
       {
         label: 'Phát minh sáng chế',
-        to: academicPatentsRoute.to,
+        to: '#',
       },
       {
         label: 'Bài báo khoa học',
