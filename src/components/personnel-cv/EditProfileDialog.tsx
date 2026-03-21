@@ -206,7 +206,8 @@ export function EditProfileDialog({
         await onSubmit(value);
         toast.success('Cập nhật thông tin thành công');
         onOpenChange(false);
-      } catch {
+      } catch (error) {
+        if (import.meta.env.DEV) console.error(error);
         toast.error('Cập nhật thông tin thất bại');
       }
     },

@@ -114,10 +114,3 @@ export const ProfileSchema = z.object({
 });
 
 export type Profile = z.infer<typeof ProfileSchema>;
-
-// TODO: replace with full profile type
-export type PartialProfile = {
-  userId: number;
-  emailVnu: string;
-  fullName: string;
-};

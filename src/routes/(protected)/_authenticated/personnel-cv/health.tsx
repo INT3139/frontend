@@ -1,5 +1,8 @@
+import { CustomErrorComponent } from '@/components/main/CustomErrorComponent';
+import { CustomPendingComponent } from '@/components/main/CustomPendingComponent';
 import { HeaderWrapper } from '@/components/main/HeaderWrapper';
 import { Button } from '@/components/ui/button';
+import { profileQueryOptions } from '@/hooks/use-profile';
 import { cn } from '@/lib/utils';
 import {
   HEALTH_RECORD,
@@ -7,6 +10,8 @@ import {
   HEALTH_STATUS_MAP,
   type HealthRecord,
 } from '@/schemas/personnel-cv/health';
+import { services } from '@/services/api';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Download, RotateCcw } from 'lucide-react';
 
@@ -14,18 +19,18 @@ export const Route = createFileRoute(
   '/(protected)/_authenticated/personnel-cv/health',
 )({
   component: RouteComponent,
+  errorComponent: CustomErrorComponent,
+  pendingComponent: CustomPendingComponent,
 });
 
-const mockHealthRecord: HealthRecord = {
-  health_status: 'B1',
-  height: 169,
-  weight: 63,
-  blood_type: 'AB',
-  notes:
-    'Thoái hóa khớp nhẹ. A looooooooooooooooooooooooooooooooooooooooong word. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.',
-};
-
 function RouteComponent() {
+  const { data: profile } = useSuspenseQuery(profileQueryOptions);
+
+  const { data: healthRecord } = useSuspenseQuery({
+    queryKey: ['health', profile.id],
+    queryFn: () => services.getHealthRecord(profile.id),
+  });
+
   return (
     <div className="">
       <HeaderWrapper title="Tình trạng sức khỏe">
@@ -36,16 +41,16 @@ function RouteComponent() {
           <Download className="h-4 w-4" /> Xuất lý lịch
         </Button>
       </HeaderWrapper>
-      <InfoGroup />
+      <InfoGroup healthRecord={healthRecord} />
     </div>
   );
 }
 
-function InfoGroup() {
+function InfoGroup({ healthRecord }: { healthRecord: HealthRecord }) {
   return (
     <div className="mt-2 px-4 py-6">
       <div className="grid grid-cols-1 gap-x-12 gap-y-4 lg:grid-cols-2">
-        {Object.entries(mockHealthRecord).map(([key, value]) => {
+        {Object.entries(healthRecord).map(([key, value]) => {
           const label = HEALTH_RECORD_MAP[key as keyof HealthRecord];
 
           if (key === HEALTH_RECORD.HEALTH_STATUS) {
@@ -70,7 +75,7 @@ function InfoGroup() {
 
       <InfoRow
         label={HEALTH_RECORD_MAP[HEALTH_RECORD.NOTES]}
-        value={mockHealthRecord.notes}
+        value={healthRecord.notes}
         className="border-0 pt-6"
       />
     </div>

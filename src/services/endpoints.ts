@@ -4,6 +4,14 @@ const auth = {
 
 const profile = {
   me: '/profiles/me',
+  health: (userId: number | string) => `/profiles/${userId}/health`,
+  trainingProducts: (
+    userId: number | string,
+    trainingProductId?: number | string,
+  ) =>
+    trainingProductId
+      ? `/profiles/${userId}/training-products/${trainingProductId}`
+      : `/profiles/${userId}/training-products`,
   education: (id: string) => `/profiles/${id}/education`,
   educationItem: (id: string, subId: string) =>
     `/profiles/${id}/education/${subId}`,
@@ -21,7 +29,7 @@ const family = {
 };
 
 const other = {
-  me: '/personnel-cv/other/me', 
+  me: '/personnel-cv/other/me',
 };
 const academicCv = {
   scholarlyWorks: '/academic-cv/scholarly-works',

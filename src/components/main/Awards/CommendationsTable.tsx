@@ -10,12 +10,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/ui/empty';
-import {
   Table,
   TableBody,
   TableCell,
@@ -30,16 +24,10 @@ import {
   COMMENDATION_RECORD_MAP,
   type CommendationRecord,
 } from '@/schemas/personnel-cv/commendation';
-import {
-  Check,
-  CircleOff,
-  Download,
-  Edit,
-  Loader2,
-  PlusCircle,
-} from 'lucide-react';
+import { Check, Download, Edit, Loader2, PlusCircle } from 'lucide-react';
 import { useState } from 'react';
 import { ApprovalStatusBadge } from '../ApprovalStatusBadge';
+import { CustomEmpty } from '../CustomEmpty';
 import { CustomTablePagination } from '../CustomTablePagination';
 import { AddCommendationForm } from './AddCommendationForm';
 
@@ -201,16 +189,7 @@ export function CommendationsTable({
           </TableBody>
         </Table>
 
-        {paginatedData.length === 0 && (
-          <Empty className="md:pt-0">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <CircleOff />
-              </EmptyMedia>
-              <EmptyTitle className="text-base">Không có dữ liệu</EmptyTitle>
-            </EmptyHeader>
-          </Empty>
-        )}
+        {paginatedData.length === 0 && <CustomEmpty />}
 
         <CustomTablePagination
           currentPage={currentPage}

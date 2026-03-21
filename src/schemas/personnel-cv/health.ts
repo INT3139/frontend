@@ -29,9 +29,9 @@ export const BLOOD_TYPES = ['A', 'B', 'O', 'AB', 'Unknown'] as const;
 //---------------------//
 
 export type HealthRecord = {
-  health_status: (typeof HEALTH_STATUS)[number];
-  height: number; //cm
-  weight: number; //kg
-  blood_type: (typeof BLOOD_TYPES)[number];
-  notes: string;
+  [HEALTH_RECORD.HEALTH_STATUS]: (typeof HEALTH_STATUS)[number];
+  [HEALTH_RECORD.HEIGHT]: number; //cm
+  [HEALTH_RECORD.WEIGHT]: number; //kg
+  [HEALTH_RECORD.BLOOD_TYPE]: (typeof BLOOD_TYPES)[number];
+  [HEALTH_RECORD.NOTES]: string;
 };
