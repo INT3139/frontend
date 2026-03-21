@@ -7,7 +7,7 @@ const MENU_ITEMS = [
     label: 'Quá trình công tác, hoạt động Đảng - đoàn thể',
     to: '/personnel-cv/work-history',
   },
-  { label: 'Quá trình Đào tạo, bồi dưỡng', to: '/personnel-cv/training' },
+  { label: 'Quá trình Đào tạo, bồi dưỡng', to: '/personnel-cv/education' },
   { label: 'Quá trình ký hợp đồng', to: '/personnel-cv/contract' },
   { label: 'Thông tin lương', to: '/personnel-cv/salary' },
   {

@@ -26,8 +26,12 @@ import {
 } from '@/components/ui/tooltip';
 import { isRouteActive } from '@/lib/sidebar';
 import { cn } from '@/lib/utils';
+import { Route as academicAwardsRoute } from '@/routes/(protected)/_authenticated/academic-cv/academic-awards';
+import { Route as academicOtherRoute } from '@/routes/(protected)/_authenticated/academic-cv/academic-other';
 import { Route as academicProjectsRoute } from '@/routes/(protected)/_authenticated/academic-cv/projects';
 import { Route as academicScholarlyWorksRoute } from '@/routes/(protected)/_authenticated/academic-cv/scholarly-works';
+import { Route as academicScientificArticlesRoute } from '@/routes/(protected)/_authenticated/academic-cv/scientific-articles';
+import { Route as academicScientificReportsRoute } from '@/routes/(protected)/_authenticated/academic-cv/scientific-reports';
 import { Route as academicTrainingProductsRoute } from '@/routes/(protected)/_authenticated/academic-cv/training-products';
 import { Route as personnelCVRoute } from '@/routes/(protected)/_authenticated/personnel-cv';
 import { Link, useLocation } from '@tanstack/react-router';
@@ -82,7 +86,7 @@ const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
         to: academicProjectsRoute.to,
       },
       {
-        label: 'Sách chuyên khảo/giáo trình',
+        label: 'Giáo trình & Sách chuyên khảo',
         to: academicScholarlyWorksRoute.to,
       },
       {
@@ -95,20 +99,20 @@ const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
       },
       {
         label: 'Bài báo khoa học',
-        to: '#',
+        to: academicScientificArticlesRoute.to,
       },
 
       {
         label: 'Báo cáo khoa học',
-        to: '#',
+        to: academicScientificReportsRoute.to,
       },
       {
         label: 'Giải thưởng',
-        to: '#',
+        to: academicAwardsRoute.to,
       },
       {
         label: 'Những thông tin khác về hoạt động KHCN',
-        to: '#',
+        to: academicOtherRoute.to,
       },
     ],
   },

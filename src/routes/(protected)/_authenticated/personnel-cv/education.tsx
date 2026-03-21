@@ -1,6 +1,7 @@
 import { ApprovalStatusBadge } from '@/components/main/ApprovalStatusBadge';
 import { HeaderWrapper } from '@/components/main/HeaderWrapper';
 import { AddTrainingForm } from '@/components/main/Training/AddTrainingForm';
+import { EditAcademicInfoForm } from '@/components/main/Training/EditAcademicInfoForm';
 import { TabNavigation } from '@/components/main/personel-cv/TabNavigation';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,16 +25,18 @@ import {
   EDUCATION_TYPE_MAP,
   TRAINING_RECORD,
   TRAINING_RECORD_MAP,
-} from '@/schemas/personnel-cv/training';
+} from '@/schemas/personnel-cv/education';
 import type {
   EducationType,
   TrainingRecord,
-} from '@/schemas/personnel-cv/training';
+} from '@/schemas/personnel-cv/education';
+import type { Profile } from '@/schemas/profile';
 import {
   createProfileEducation,
   deleteProfileEducation,
   getMyProfile,
   getProfileEducation,
+  updateProfile,
   updateProfileEducation,
 } from '@/services/api/profile';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -43,7 +46,7 @@ import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 export const Route = createFileRoute(
-  '/(protected)/_authenticated/personnel-cv/training',
+  '/(protected)/_authenticated/personnel-cv/education',
 )({
   component: RouteComponent,
 });
@@ -73,6 +76,8 @@ function RouteComponent() {
   const [editingRecord, setEditingRecord] = useState<TrainingRecord | null>(
     null,
   );
+  const [isEditAcademicInfoDialogOpen, setIsEditAcademicInfoDialogOpen] =
+    useState(false);
 
   const topTabs = ['Trình độ chuyên môn', 'Học hàm'];
   const bottomTabsSpecs: EducationType[] = [
@@ -136,6 +141,17 @@ function RouteComponent() {
       toast.success('Xóa thành công');
     },
     onError: () => toast.error('Xóa thất bại'),
+  });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: (data: Partial<Profile>) =>
+      updateProfile(Number(profileId), data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile', 'me'] });
+      setIsEditAcademicInfoDialogOpen(false);
+      toast.success('Cập nhật chuyên môn thành công');
+    },
+    onError: () => toast.error('Cập nhật thất bại'),
   });
 
   // Filtered data for current tab
@@ -229,6 +245,15 @@ function RouteComponent() {
         activeTab={activeTopTab}
         onTabChange={setActiveTopTab}
       />
+
+      <div className="mt-4 flex justify-end px-4">
+        <Button
+          variant="outline"
+          onClick={() => setIsEditAcademicInfoDialogOpen(true)}
+        >
+          <Edit className="mr-2 h-4 w-4" /> Chỉnh sửa thông tin
+        </Button>
+      </div>
 
       {/* Info Grid */}
       <div className="px-4 py-6">
@@ -442,6 +467,48 @@ function RouteComponent() {
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={isEditAcademicInfoDialogOpen}
+        onOpenChange={setIsEditAcademicInfoDialogOpen}
+      >
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              Chỉnh sửa Học hàm, trình độ chuyên môn
+            </DialogTitle>
+            <DialogDescription className="sr-only"></DialogDescription>
+          </DialogHeader>
+          <div className="max-h-[80vh] overflow-y-auto px-1">
+            {profile && (
+              <EditAcademicInfoForm
+                initialValues={profile}
+                onSubmitSuccess={(values) => {
+                  updateProfileMutation.mutate(values as Partial<Profile>);
+                }}
+                renderActions={(isSubmitting) => (
+                  <>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setIsEditAcademicInfoDialogOpen(false)}
+                      disabled={isSubmitting}
+                    >
+                      Hủy
+                    </Button>
+                    <Button type="submit" disabled={isSubmitting}>
+                      {isSubmitting && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      Xác nhận
+                    </Button>
+                  </>
+                )}
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
