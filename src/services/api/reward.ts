@@ -72,11 +72,18 @@ export type CreateCommendationRequest = Omit<
   | typeof COMMENDATION_RECORD.ATTACHMENT_URL
 > & {
   attachment?: File;
+  isAcademicYear?: boolean;
 };
 
 export const createCommendation = async (
   record: CreateCommendationRequest,
 ): Promise<CommendationRecord> => {
+  let academicYear = record.academicYear || null;
+  if (record.isAcademicYear && academicYear && /^\d{4}$/.test(academicYear)) {
+    const year = parseInt(academicYear, 10);
+    academicYear = `${year}-${year + 1}`;
+  }
+
   // Transform FE to BE
   const payload = {
     decisionNumber: record.decisionNumber || null,
@@ -86,7 +93,7 @@ export const createCommendation = async (
     awardLevel: AWARD_LEVEL_MAP[record.awardScope] || 'co_so',
     awardName: record.awardName,
     content: record.content || null,
-    academicYear: record.academicYear || null,
+    academicYear,
     isHighestAward: false,
     status: 'pending',
     attachmentId: null,

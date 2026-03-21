@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { isValidDate } from '@/lib/date';
+import { isAfterDate, isFutureDate, isValidDate } from '@/lib/date';
 import {
   TRAINING_PRODUCT_RECORD,
   TRAINING_PRODUCT_RECORD_MAP,
@@ -32,7 +32,6 @@ import { APPROVAL_STATUS } from '@/schemas/personnel-cv/approval';
 import { addTrainingProduct } from '@/services/api/training-product';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
-import { isAfter, parse } from 'date-fns';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
@@ -43,12 +42,20 @@ const formSchema = z
     ),
     [TRAINING_PRODUCT_RECORD.STUDENT_NAME]: z
       .string()
+      .trim()
       .min(1, 'Vui lòng nhập tên học viên'),
     [TRAINING_PRODUCT_RECORD.THESIS_TITLE]: z
       .string()
-      .min(5, 'Tên khóa luận/luận văn/luận án phải có ít nhất 5 ký tự')
-      .max(500, 'Tên khóa luận/luận văn/luận án không được vượt quá 500 ký tự'),
-    [TRAINING_PRODUCT_RECORD.ASSIGNMENT]: z.string().optional(),
+      .trim()
+      .refine(
+        (v) => v.replace(/\s/g, '').length >= 10,
+        'Phải có ít nhất 10 ký tự (không tính khoảng trắng)',
+      )
+      .refine(
+        (v) => v.replace(/\s/g, '').length <= 500,
+        'Không được vượt quá 500 ký tự (không tính khoảng trắng)',
+      ),
+    [TRAINING_PRODUCT_RECORD.ASSIGNMENT]: z.string().trim().optional(),
     [TRAINING_PRODUCT_RECORD.EDUCATION_LEVEL]: z.enum(
       Object.values(EDUCATION_LEVEL),
     ),
@@ -64,6 +71,9 @@ const formSchema = z
           })
           .refine((val) => parseInt(val.split('/')[1], 10) >= 1900, {
             message: 'Năm bắt đầu phải từ 1900 trở lên!',
+          })
+          .refine((val) => !isFutureDate(val, 'MM/yyyy'), {
+            message: 'Thời gian không được ở tương lai!',
           }),
       ),
     [TRAINING_PRODUCT_RECORD.END_TIME]: z
@@ -75,23 +85,22 @@ const formSchema = z
           .regex(/^\d{2}\/\d{4}$/, 'Vui lòng sử dụng định dạng: MM/YYYY!')
           .refine((val) => isValidDate(val, 'MM/yyyy'), {
             message: 'Tháng/năm không hợp lệ!',
+          })
+          .refine((val) => parseInt(val.split('/')[1], 10) >= 1900, {
+            message: 'Năm bắt đầu phải từ 1900 trở lên!',
+          })
+          .refine((val) => !isFutureDate(val, 'MM/yyyy'), {
+            message: 'Thời gian không được ở tương lai!',
           }),
       ),
   })
   .refine(
     (data) => {
-      try {
-        const startStr = data[TRAINING_PRODUCT_RECORD.START_TIME];
-        const endStr = data[TRAINING_PRODUCT_RECORD.END_TIME];
-        if (!startStr || !endStr) return true;
+      const startStr = data[TRAINING_PRODUCT_RECORD.START_TIME];
+      const endStr = data[TRAINING_PRODUCT_RECORD.END_TIME];
+      if (!startStr || !endStr) return true;
 
-        const start = parse(startStr, 'MM/yyyy', new Date());
-        const end = parse(endStr, 'MM/yyyy', new Date());
-
-        return isAfter(end, start);
-      } catch {
-        return false;
-      }
+      return isAfterDate(endStr, startStr, 'MM/yyyy');
     },
     {
       message: 'Thời gian kết thúc phải sau thời gian bắt đầu!',

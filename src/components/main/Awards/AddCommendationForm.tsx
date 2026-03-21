@@ -30,7 +30,7 @@ import {
   COMMENDATION_RECORD,
   COMMENDATION_RECORD_MAP,
 } from '@/schemas/personnel-cv/commendation';
-import { createCommendation } from '@/services/api/reward';
+import { services } from '@/services/api';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
@@ -67,13 +67,26 @@ const formSchema = z.object({
 
   [COMMENDATION_RECORD.AWARD_NAME]: z
     .string()
-    .min(10, 'Tên khen thưởng phải có ít nhất 10 ký tự')
-    .max(100, 'Tên khen thưởng không được vượt quá 100 ký tự'),
+    .trim()
+    .refine((v) => v.replace(/\s/g, '').length >= 10, {
+      message:
+        'Tên khen thưởng phải có ít nhất 10 ký tự (không tính khoảng trắng)',
+    })
+    .refine((v) => v.replace(/\s/g, '').length <= 100, {
+      message:
+        'Tên khen thưởng không được vượt quá 100 ký tự (không tính khoảng trắng)',
+    }),
 
   [COMMENDATION_RECORD.CONTENT]: z
     .string()
-    .min(10, 'Nội dung phải có ít nhất 10 ký tự')
-    .max(200, 'Nội dung không được vượt quá 200 ký tự'),
+    .trim()
+    .refine((v) => v.replace(/\s/g, '').length >= 10, {
+      message: 'Nội dung phải có ít nhất 10 ký tự (không tính khoảng trắng)',
+    })
+    .refine((v) => v.replace(/\s/g, '').length <= 200, {
+      message:
+        'Nội dung không được vượt quá 200 ký tự (không tính khoảng trắng)',
+    }),
 
   [COMMENDATION_RECORD.ACADEMIC_YEAR]: z
     .string()
@@ -81,17 +94,19 @@ const formSchema = z.object({
     .refine(
       (val) => {
         if (!val) return true;
-        const startYear = parseInt(val.split('-')[0], 10);
+        const year = parseInt(val, 10);
         const currentYear = new Date().getFullYear();
-        return startYear >= 1900 && startYear <= currentYear;
+        return /^\d{4}$/.test(val) && year >= 1900 && year <= currentYear;
       },
       {
-        message: 'Năm phải từ 1900 đến năm hiện tại.',
+        message: 'Năm phải có định dạng YYYY (từ 1900 đến nay).',
       },
     ),
+  isAcademicYear: z.boolean(),
 
   attachment: z
-    .any()
+    .instanceof(File)
+    .optional()
     .refine(
       (file) => !file || file.size <= 20 * 1024 * 1024,
       'Kích thước file tối đa là 20MB',
@@ -107,9 +122,11 @@ const formSchema = z.object({
     .optional(),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
 interface AddCommendationFormProps {
   renderActions?: (isSubmitting: boolean) => React.ReactNode;
-  onSubmitSuccess?: (values: z.infer<typeof formSchema>) => void;
+  onSubmitSuccess?: (values: FormValues) => void;
 }
 
 function ImagePreview({ file }: { file: File }) {
@@ -144,8 +161,7 @@ export function AddCommendationForm({
   onSubmitSuccess,
 }: AddCommendationFormProps) {
   const { mutate, isPending } = useMutation({
-    mutationFn: (record: z.infer<typeof formSchema>) =>
-      createCommendation(record),
+    mutationFn: (record: FormValues) => services.createCommendation(record),
     onSuccess: (_, value) => {
       onSubmitSuccess?.(value);
       toast.success('Thêm thông tin Khen thưởng thành công!');
@@ -160,7 +176,8 @@ export function AddCommendationForm({
       [COMMENDATION_RECORD.AWARD_NAME]: '',
       [COMMENDATION_RECORD.CONTENT]: '',
       [COMMENDATION_RECORD.ACADEMIC_YEAR]: '',
-    } as z.infer<typeof formSchema>,
+      isAcademicYear: false,
+    } as FormValues,
     validators: {
       onChangeAsyncDebounceMs: 500,
       onChangeAsync: formSchema,
@@ -332,94 +349,97 @@ export function AddCommendationForm({
           }}
         />
 
-        <form.Field
-          name={COMMENDATION_RECORD.ACADEMIC_YEAR}
-          children={(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid;
-            const value = field.state.value || '';
-            const isAcademicMode = value.includes('-');
-            const startYear = isAcademicMode ? value.split('-')[0] : value;
-            const endYear = startYear
-              ? (parseInt(startYear) + 1).toString()
-              : '';
+        <form.Subscribe
+          selector={(state) => state.values.isAcademicYear}
+          children={(isAcademicYear) => (
+            <form.Field
+              name={COMMENDATION_RECORD.ACADEMIC_YEAR}
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched &&
+                  !!field.state.meta.errors.length;
+                const value = field.state.value || '';
+                const startYear = value;
+                const endYear = /^\d{4}$/.test(startYear)
+                  ? (parseInt(startYear, 10) + 1).toString()
+                  : '';
 
-            return (
-              <Field data-invalid={isInvalid}>
-                <div className="flex items-center justify-between">
-                  <FieldLabel htmlFor={field.name}>
-                    {COMMENDATION_RECORD_MAP[COMMENDATION_RECORD.ACADEMIC_YEAR]}
-                  </FieldLabel>
-                  <div className="bg-muted flex rounded-md p-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (isAcademicMode) {
-                          field.handleChange(startYear);
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <div className="flex items-center justify-between">
+                      <FieldLabel htmlFor={field.name}>
+                        {
+                          COMMENDATION_RECORD_MAP[
+                            COMMENDATION_RECORD.ACADEMIC_YEAR
+                          ]
                         }
-                      }}
-                      className={`rounded-sm px-4 py-1 text-xs ${!isAcademicMode ? 'bg-background text-foreground border' : 'text-muted-foreground hover:text-foreground'}`}
-                    >
-                      Năm
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!isAcademicMode) {
-                          const nextYear = parseInt(startYear) + 1;
-                          field.handleChange(
-                            startYear
-                              ? `${startYear}-${isNaN(nextYear) ? '' : nextYear}`
-                              : '-',
-                          );
-                        }
-                      }}
-                      className={`rounded-sm px-4 py-1 text-xs transition-colors ${isAcademicMode ? 'bg-background text-foreground border' : 'text-muted-foreground hover:text-foreground'}`}
-                    >
-                      Năm học
-                    </button>
-                  </div>
-                </div>
-                <InputGroup>
-                  <InputGroupInput
-                    id={field.name}
-                    type="number"
-                    placeholder="YYYY"
-                    value={startYear}
-                    onChange={(e) => {
-                      const newStartYear = e.target.value;
-                      if (!newStartYear) {
-                        field.handleChange('');
-                      } else if (isAcademicMode) {
-                        const nextYear = parseInt(newStartYear) + 1;
-                        field.handleChange(
-                          `${newStartYear}-${isNaN(nextYear) ? '' : nextYear}`,
-                        );
-                      } else {
-                        field.handleChange(newStartYear);
-                      }
-                    }}
-                    onBlur={field.handleBlur}
-                    aria-invalid={isInvalid}
-                    min={1900}
-                    max={new Date().getFullYear()}
-                  />
-                  {isAcademicMode && (
-                    <InputGroupAddon
-                      align="inline-end"
-                      className="border-l p-2 px-4"
-                    >
-                      <InputGroupText className="text-muted-foreground space-x-2">
-                        <span className="text-xs">—</span>
-                        <span>{endYear}</span>
-                      </InputGroupText>
-                    </InputGroupAddon>
-                  )}
-                </InputGroup>
-                {isInvalid && <FieldError errors={field.state.meta.errors} />}
-              </Field>
-            );
-          }}
+                      </FieldLabel>
+                      <div className="bg-muted flex rounded-md p-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            field.form.setFieldValue('isAcademicYear', false);
+                          }}
+                          className={`rounded-sm px-4 py-1 text-xs ${!isAcademicYear ? 'bg-background text-foreground border' : 'text-muted-foreground hover:text-foreground'}`}
+                        >
+                          Năm
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            field.form.setFieldValue('isAcademicYear', true);
+                          }}
+                          className={`rounded-sm px-4 py-1 text-xs transition-colors ${isAcademicYear ? 'bg-background text-foreground border' : 'text-muted-foreground hover:text-foreground'}`}
+                        >
+                          Năm học
+                        </button>
+                      </div>
+                    </div>
+                    <InputGroup>
+                      <InputGroupInput
+                        id={field.name}
+                        type="number"
+                        placeholder="YYYY"
+                        value={startYear}
+                        onChange={(e) => {
+                          field.handleChange(e.target.value);
+                        }}
+                        onPaste={(e) => {
+                          const pasteData = e.clipboardData.getData('text');
+                          if (!/^\d*$/.test(pasteData)) {
+                            e.preventDefault();
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
+                        onBlur={field.handleBlur}
+                        aria-invalid={isInvalid}
+                        min={1900}
+                        max={new Date().getFullYear()}
+                      />
+                      {isAcademicYear && (
+                        <InputGroupAddon
+                          align="inline-end"
+                          className="border-l p-2 px-4"
+                        >
+                          <InputGroupText className="text-muted-foreground space-x-2">
+                            <span className="text-xs">—</span>
+                            <span>{endYear}</span>
+                          </InputGroupText>
+                        </InputGroupAddon>
+                      )}
+                    </InputGroup>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                );
+              }}
+            />
+          )}
         />
 
         <form.Field
