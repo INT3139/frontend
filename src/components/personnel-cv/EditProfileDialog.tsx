@@ -227,34 +227,73 @@ export function EditProfileDialog({
           className="space-y-6 py-4"
         >
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* THÔNG TIN ĐỊNH DANH */}
             <div className="space-y-4">
               <h3 className="border-b pb-2 text-lg font-semibold">
                 Thông tin định danh
               </h3>
               <form.Field
                 name="idNumber"
+                validators={{
+                  onChange: ({ value }) => {
+                    if (!value) return 'Bắt buộc nhập số CMND/CCCD';
+                    if (!/^[0-9]{12}$/.test(value))
+                      return 'CCCD phải bao gồm đúng 12 chữ số';
+                    return undefined;
+                  },
+                }}
                 children={(field) => (
                   <Field>
-                    <FieldLabel htmlFor={field.name}>Số CMND/CCCD</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      Số CMND/CCCD <span className="text-red-500">*</span>
+                    </FieldLabel>
                     <Input
                       id={field.name}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className={
+                        field.state.meta.errors.length ? 'border-red-500' : ''
+                      }
                     />
+                    {field.state.meta.errors.length > 0 && (
+                      <span className="text-sm text-red-500">
+                        {field.state.meta.errors.join(', ')}
+                      </span>
+                    )}
                   </Field>
                 )}
               />
               <form.Field
                 name="idIssuedDate"
+                validators={{
+                  onChange: ({ value }) => {
+                    if (!value) return 'Vui lòng chọn ngày cấp';
+                    const selectedDate = new Date(value);
+                    const today = new Date();
+                    if (selectedDate > today)
+                      return 'Ngày cấp không thể ở tương lai';
+                    return undefined;
+                  },
+                }}
                 children={(field) => (
                   <Field>
-                    <FieldLabel htmlFor={field.name}>Ngày cấp</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      Ngày cấp <span className="text-red-500">*</span>
+                    </FieldLabel>
                     <Input
                       id={field.name}
                       type="date"
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className={
+                        field.state.meta.errors.length ? 'border-red-500' : ''
+                      }
                     />
+                    {field.state.meta.errors.length > 0 && (
+                      <span className="text-sm text-red-500">
+                        {field.state.meta.errors.join(', ')}
+                      </span>
+                    )}
                   </Field>
                 )}
               />
@@ -273,12 +312,20 @@ export function EditProfileDialog({
               />
             </div>
 
+            {/* THÔNG TIN LIÊN LẠC */}
             <div className="space-y-4">
               <h3 className="border-b pb-2 text-lg font-semibold">
                 Thông tin liên lạc
               </h3>
               <form.Field
                 name="phoneWork"
+                validators={{
+                  onChange: ({ value }) => {
+                    if (value && !/^0[0-9]{9}$/.test(value))
+                      return 'SĐT phải bắt đầu bằng số 0 và có đúng 10 số';
+                    return undefined;
+                  },
+                }}
                 children={(field) => (
                   <Field>
                     <FieldLabel htmlFor={field.name}>SĐT cơ quan</FieldLabel>
@@ -286,12 +333,27 @@ export function EditProfileDialog({
                       id={field.name}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className={
+                        field.state.meta.errors.length ? 'border-red-500' : ''
+                      }
                     />
+                    {field.state.meta.errors.length > 0 && (
+                      <span className="text-sm text-red-500">
+                        {field.state.meta.errors.join(', ')}
+                      </span>
+                    )}
                   </Field>
                 )}
               />
               <form.Field
                 name="phoneHome"
+                validators={{
+                  onChange: ({ value }) => {
+                    if (value && !/^0[0-9]{9}$/.test(value))
+                      return 'SĐT phải bắt đầu bằng số 0 và có đúng 10 số';
+                    return undefined;
+                  },
+                }}
                 children={(field) => (
                   <Field>
                     <FieldLabel htmlFor={field.name}>SĐT nhà riêng</FieldLabel>
@@ -299,12 +361,27 @@ export function EditProfileDialog({
                       id={field.name}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className={
+                        field.state.meta.errors.length ? 'border-red-500' : ''
+                      }
                     />
+                    {field.state.meta.errors.length > 0 && (
+                      <span className="text-sm text-red-500">
+                        {field.state.meta.errors.join(', ')}
+                      </span>
+                    )}
                   </Field>
                 )}
               />
               <form.Field
                 name="emailPersonal"
+                validators={{
+                  onChange: ({ value }) => {
+                    if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+                      return 'Email không đúng định dạng';
+                    return undefined;
+                  },
+                }}
                 children={(field) => (
                   <Field>
                     <FieldLabel htmlFor={field.name}>Email cá nhân</FieldLabel>
@@ -313,52 +390,103 @@ export function EditProfileDialog({
                       type="email"
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className={
+                        field.state.meta.errors.length ? 'border-red-500' : ''
+                      }
                     />
+                    {field.state.meta.errors.length > 0 && (
+                      <span className="text-sm text-red-500">
+                        {field.state.meta.errors.join(', ')}
+                      </span>
+                    )}
                   </Field>
                 )}
               />
             </div>
 
+            {/* THÔNG TIN CÁ NHÂN */}
             <div className="space-y-4">
               <h3 className="border-b pb-2 text-lg font-semibold">
                 Thông tin cá nhân
               </h3>
               <form.Field
                 name="nationality"
+                validators={{
+                  onChange: ({ value }) =>
+                    !value ? 'Vui lòng điền Quốc tịch' : undefined,
+                }}
                 children={(field) => (
                   <Field>
-                    <FieldLabel htmlFor={field.name}>Quốc tịch</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      Quốc tịch <span className="text-red-500">*</span>
+                    </FieldLabel>
                     <Input
                       id={field.name}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className={
+                        field.state.meta.errors.length ? 'border-red-500' : ''
+                      }
                     />
+                    {field.state.meta.errors.length > 0 && (
+                      <span className="text-sm text-red-500">
+                        {field.state.meta.errors.join(', ')}
+                      </span>
+                    )}
                   </Field>
                 )}
               />
               <form.Field
                 name="ethnicity"
+                validators={{
+                  onChange: ({ value }) =>
+                    !value ? 'Vui lòng điền Dân tộc' : undefined,
+                }}
                 children={(field) => (
                   <Field>
-                    <FieldLabel htmlFor={field.name}>Dân tộc</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      Dân tộc <span className="text-red-500">*</span>
+                    </FieldLabel>
                     <Input
                       id={field.name}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className={
+                        field.state.meta.errors.length ? 'border-red-500' : ''
+                      }
                     />
+                    {field.state.meta.errors.length > 0 && (
+                      <span className="text-sm text-red-500">
+                        {field.state.meta.errors.join(', ')}
+                      </span>
+                    )}
                   </Field>
                 )}
               />
               <form.Field
                 name="religion"
+                validators={{
+                  onChange: ({ value }) =>
+                    !value ? 'Vui lòng điền Tôn giáo' : undefined,
+                }}
                 children={(field) => (
                   <Field>
-                    <FieldLabel htmlFor={field.name}>Tôn giáo</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      Tôn giáo <span className="text-red-500">*</span>
+                    </FieldLabel>
                     <Input
                       id={field.name}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className={
+                        field.state.meta.errors.length ? 'border-red-500' : ''
+                      }
                     />
+                    {field.state.meta.errors.length > 0 && (
+                      <span className="text-sm text-red-500">
+                        {field.state.meta.errors.join(', ')}
+                      </span>
+                    )}
                   </Field>
                 )}
               />
@@ -392,6 +520,7 @@ export function EditProfileDialog({
               />
             </div>
 
+            {/* THÔNG TIN KHÁC */}
             <div className="space-y-4">
               <h3 className="border-b pb-2 text-lg font-semibold">
                 Thông tin khác
@@ -426,6 +555,13 @@ export function EditProfileDialog({
               />
               <form.Field
                 name="insuranceNumber"
+                validators={{
+                  onChange: ({ value }) => {
+                    if (value && !/^[0-9]{10}$/.test(value))
+                      return 'Số BHXH phải bao gồm đúng 10 chữ số';
+                    return undefined;
+                  },
+                }}
                 children={(field) => (
                   <Field>
                     <FieldLabel htmlFor={field.name}>Số BHXH</FieldLabel>
@@ -433,12 +569,21 @@ export function EditProfileDialog({
                       id={field.name}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className={
+                        field.state.meta.errors.length ? 'border-red-500' : ''
+                      }
                     />
+                    {field.state.meta.errors.length > 0 && (
+                      <span className="text-sm text-red-500">
+                        {field.state.meta.errors.join(', ')}
+                      </span>
+                    )}
                   </Field>
                 )}
               />
             </div>
 
+            {/* THÔNG TIN HỘ CHIẾU */}
             <div className="space-y-4 md:col-span-2">
               <h3 className="border-b pb-2 text-lg font-semibold">
                 Thông tin hộ chiếu
@@ -446,6 +591,13 @@ export function EditProfileDialog({
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <form.Field
                   name="passportNumber"
+                  validators={{
+                    onChange: ({ value }) => {
+                      if (value && !/^[A-Za-z0-9]{8,9}$/.test(value))
+                        return 'Hộ chiếu không hợp lệ (8-9 ký tự gồm chữ và số)';
+                      return undefined;
+                    },
+                  }}
                   children={(field) => (
                     <Field>
                       <FieldLabel htmlFor={field.name}>Số hộ chiếu</FieldLabel>
@@ -453,12 +605,27 @@ export function EditProfileDialog({
                         id={field.name}
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
+                        className={
+                          field.state.meta.errors.length ? 'border-red-500' : ''
+                        }
                       />
+                      {field.state.meta.errors.length > 0 && (
+                        <span className="text-sm text-red-500">
+                          {field.state.meta.errors.join(', ')}
+                        </span>
+                      )}
                     </Field>
                   )}
                 />
                 <form.Field
                   name="passportIssuedAt"
+                  validators={{
+                    onChange: ({ value }) => {
+                      if (value && new Date(value) > new Date())
+                        return 'Ngày cấp không thể ở tương lai';
+                      return undefined;
+                    },
+                  }}
                   children={(field) => (
                     <Field>
                       <FieldLabel htmlFor={field.name}>Ngày cấp</FieldLabel>
@@ -467,7 +634,15 @@ export function EditProfileDialog({
                         type="date"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
+                        className={
+                          field.state.meta.errors.length ? 'border-red-500' : ''
+                        }
                       />
+                      {field.state.meta.errors.length > 0 && (
+                        <span className="text-sm text-red-500">
+                          {field.state.meta.errors.join(', ')}
+                        </span>
+                      )}
                     </Field>
                   )}
                 />
@@ -515,7 +690,14 @@ export function EditProfileDialog({
             >
               Hủy
             </Button>
-            <Button type="submit" disabled={form.state.isSubmitting}>
+            <Button
+              type="submit"
+              disabled={
+                form.state.isSubmitting ||
+                !form.state.canSubmit ||
+                !form.state.isDirty
+              }
+            >
               {form.state.isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi'}
             </Button>
           </div>

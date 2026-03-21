@@ -4,7 +4,8 @@ import { ENDPOINTS } from '@/services/endpoints';
 import { HttpResponse, http } from 'msw';
 import { withAuth } from '../middleware';
 
-const mockProfile: any = {
+// 1. Đổi tên thành defaultProfile
+const defaultProfile: any = {
   id: 2,
   username: 'annv',
   password: '123',
@@ -107,6 +108,17 @@ const mockProfile: any = {
   },
 };
 
+// 2. Khởi tạo mockProfile từ LocalStorage (chống F5 mất data)
+let mockProfile: any = { ...defaultProfile };
+try {
+  const savedData = localStorage.getItem('mockProfile_hieu');
+  if (savedData) {
+    mockProfile = JSON.parse(savedData);
+  }
+} catch (error) {
+  console.error('Lỗi khi lấy dữ liệu từ localStorage', error);
+}
+
 let mockEducation: any[] = [
   {
     id: '1',
@@ -179,17 +191,39 @@ export const handlers = [
       });
     }),
   ),
+
+  // 3. API PUT xử lý lưu vào LocalStorage
+  http.put(
+    import.meta.env.VITE_MOCK_API_PREFIX + ENDPOINTS.profile.me,
+    withAuth(async ({ request }) => {
+      const data = (await request.json()) as Record<string, unknown>;
+
+      Object.assign(mockProfile, data);
+
+      // Lưu thẳng vào trình duyệt
+      localStorage.setItem('mockProfile_hieu', JSON.stringify(mockProfile));
+
+      return HttpResponse.json({
+        status: 'success',
+        message: 'Cập nhật thông tin thành công',
+        data: mockProfile,
+      });
+    }),
+  ),
+
   http.put(
     import.meta.env.VITE_MOCK_API_PREFIX + '/profiles/:id',
     withAuth(async ({ request }) => {
       const data = (await request.json()) as Record<string, unknown>;
       Object.assign(mockProfile, data);
+      localStorage.setItem('mockProfile_hieu', JSON.stringify(mockProfile));
       return HttpResponse.json({
         status: 'success',
         data: mockProfile,
       });
     }),
   ),
+
   http.put(
     import.meta.env.VITE_MOCK_API_PREFIX + '/profiles/:id/recruitment',
     withAuth(async ({ request }) => {
@@ -210,6 +244,7 @@ export const handlers = [
       });
     }),
   ),
+
   http.get(
     import.meta.env.VITE_MOCK_API_PREFIX + '/profiles/:id/education',
     withAuth(() => {
@@ -219,6 +254,7 @@ export const handlers = [
       });
     }),
   ),
+
   http.post(
     import.meta.env.VITE_MOCK_API_PREFIX + '/profiles/:id/education',
     withAuth(async ({ request }) => {
@@ -235,6 +271,7 @@ export const handlers = [
       });
     }),
   ),
+
   http.put(
     import.meta.env.VITE_MOCK_API_PREFIX + '/profiles/:id/education/:subId',
     withAuth(async ({ request, params }) => {
@@ -251,6 +288,7 @@ export const handlers = [
       return HttpResponse.json({ success: false }, { status: 404 });
     }),
   ),
+
   http.delete(
     import.meta.env.VITE_MOCK_API_PREFIX + '/profiles/:id/education/:subId',
     withAuth(({ params }) => {
@@ -259,6 +297,7 @@ export const handlers = [
       return HttpResponse.json({ success: true });
     }),
   ),
+
   http.get(
     import.meta.env.VITE_MOCK_API_PREFIX + '/profiles/:id/work-history',
     withAuth(() => {
@@ -268,6 +307,7 @@ export const handlers = [
       });
     }),
   ),
+
   http.post(
     import.meta.env.VITE_MOCK_API_PREFIX + '/profiles/:id/work-history',
     withAuth(async ({ request }) => {
@@ -284,6 +324,7 @@ export const handlers = [
       });
     }),
   ),
+
   http.put(
     import.meta.env.VITE_MOCK_API_PREFIX + '/profiles/:id/work-history/:subId',
     withAuth(async ({ request, params }) => {
@@ -300,6 +341,7 @@ export const handlers = [
       return HttpResponse.json({ success: false }, { status: 404 });
     }),
   ),
+
   http.delete(
     import.meta.env.VITE_MOCK_API_PREFIX + '/profiles/:id/work-history/:subId',
     withAuth(({ params }) => {
